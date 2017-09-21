@@ -23,8 +23,7 @@ module.exports = () => {
     next();
   }
 
-  function load(req, res, next) {
-    req.resource = {};
-    next();
+  function load(req, res) {
+    res.status(404).json({error: {code: 404, message: 'Not found', details: `Resource ${req.params.id} can not be found`}});
   }
 };

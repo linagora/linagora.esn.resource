@@ -4,25 +4,39 @@ const AwesomeModule = require('awesome-module');
 const Dependency = AwesomeModule.AwesomeModuleDependency;
 const MODULE_NAME = 'linagora.esn.resource';
 
-const module = new AwesomeModule(MODULE_NAME, {
+module.exports = new AwesomeModule(MODULE_NAME, {
   dependencies: [
     new Dependency(Dependency.TYPE_NAME, 'linagora.esn.core.user', 'user'),
+    new Dependency(Dependency.TYPE_NAME, 'linagora.esn.core.db', 'db'),
     new Dependency(Dependency.TYPE_NAME, 'linagora.esn.core.logger', 'logger'),
-    new Dependency(Dependency.TYPE_NAME, 'linagora.esn.core.pubsub', 'pubsub')
+    new Dependency(Dependency.TYPE_NAME, 'linagora.esn.core.pubsub', 'pubsub'),
+    new Dependency(Dependency.TYPE_NAME, 'linagora.esn.core.webserver.wrapper', 'webserver-wrapper'),
+    new Dependency(Dependency.TYPE_NAME, 'linagora.esn.core.webserver.middleware.authorization', 'authorizationMW'),
+    new Dependency(Dependency.TYPE_NAME, 'linagora.esn.core.i18n', 'i18n')
   ],
 
   states: {
     lib: function(dependencies, callback) {
+      const api = require('./backend/webserver/api')(dependencies);
       const lib = require('./backend/lib')(dependencies);
 
-      return callback(null, lib);
+      return callback(null, {
+        api, lib
+      });
+    },
+
+    deploy: function(dependencies, callback) {
+      const webserverWrapper = dependencies('webserver-wrapper');
+      const app = require('./backend/webserver/application')(dependencies);
+
+      app.use('/api', this.api);
+      webserverWrapper.addApp(MODULE_NAME, app);
+
+      callback();
     },
 
     start: function(dependencies, callback) {
-      this.amqpListener.start();
       callback();
     }
   }
 });
-
-module.exports = module;

@@ -1,13 +1,20 @@
 const request = require('supertest');
+const { expect } = require('chai');
 const { ObjectId } = require('bson');
 
 describe('The resource API', function() {
-  let user;
+  let user, resource, domain;
   const password = 'secret';
   const moduleName = 'linagora.esn.resource';
 
   beforeEach(function(done) {
     const self = this;
+
+    resource = {
+      name: 'Office 34',
+      description: 'At the left then at the right then at the left',
+      type: 'calendar-resource'
+    };
 
     this.helpers.modules.initMidway(moduleName, function(err) {
       if (err) {
@@ -19,6 +26,7 @@ describe('The resource API', function() {
           return done(err);
         }
         user = models.users[0];
+        domain = models.domain;
         self.models = models;
         done();
       });
@@ -49,13 +57,47 @@ describe('The resource API', function() {
         if (err) {
           return done(err);
         }
-        const req = requestAsMember(request(self.app).post(`/api/resources/${id}`));
+        const req = requestAsMember(request(self.app).get(`/api/resources/${id}`));
 
         req.expect(404, done);
       });
     });
 
-    it('should 200 with the resource', function() {
+    it('should 200 with the resource', function(done) {
+      const self = this;
+
+      resource.creator = user._id;
+      resource.domain = domain._id;
+
+      this.helpers.modules.current.lib.lib.resource.create(resource)
+      .then(test)
+      .catch(done);
+
+      function test(resourceToGet) {
+        self.helpers.api.loginAsUser(self.app, user.emails[0], password, (err, requestAsMember) => {
+          if (err) {
+            return done(err);
+          }
+          const req = requestAsMember(request(self.app).get(`/api/resources/${resourceToGet._id}`));
+
+          req.expect(200);
+          req.end((err, res) => {
+            if (err) {
+              return done(err);
+            }
+
+            expect(res.body).to.shallowDeepEqual({
+              _id: resourceToGet.id,
+              creator: user.id,
+              domain: domain.id,
+              name: resource.name,
+              description: resource.description,
+              type: resource.type
+            });
+            done();
+          });
+        });
+      }
     });
   });
 
@@ -72,10 +114,35 @@ describe('The resource API', function() {
   });
 
   describe('POST /', function() {
-    it('should 404 when resource does not exists', function() {
+    it('should 401 if not logged in', function(done) {
+      this.helpers.api.requireLogin(this.app, 'post', '/api/resources', done);
     });
 
-    it('should create the resource and send it back', function() {
+    it('should create the resource and send it back', function(done) {
+      const self = this;
+
+      self.helpers.api.loginAsUser(self.app, user.emails[0], password, (err, requestAsMember) => {
+        if (err) {
+          return done(err);
+        }
+
+        requestAsMember(request(self.app)
+          .post('/api/resources'))
+          .send(resource)
+          .expect(201)
+          .end((err, res) => {
+            if (err) {
+              return done(err);
+            }
+
+            expect(res.body).to.shallowDeepEqual({
+              name: resource.name,
+              description: resource.description,
+              type: resource.type
+            });
+            done();
+          });
+      });
     });
   });
 

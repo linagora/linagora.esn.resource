@@ -1,4 +1,7 @@
-module.exports = () => {
+module.exports = dependencies => {
+  const logger = dependencies('logger');
+  const resourceLib = require('../../../lib/resource')(dependencies);
+
   return {
     canCreateResource,
     canReadResource,
@@ -23,7 +26,19 @@ module.exports = () => {
     next();
   }
 
-  function load(req, res) {
-    res.status(404).json({error: {code: 404, message: 'Not found', details: `Resource ${req.params.id} can not be found`}});
+  function load(req, res, next) {
+    resourceLib.get(req.params.id).then(result => {
+      if (!result) {
+        return res.status(404).json({error: {code: 404, message: 'Not found', details: `Resource ${req.params.id} can not be found`}});
+      }
+
+      req.resource = result;
+      next();
+    }).catch(err => {
+      const details = `Error while loading the resource with id ${req.params.id}`;
+
+      logger.error(details, err);
+      res.status(500).json({error: {status: 500, message: 'Server Error', details}});
+    });
   }
 };

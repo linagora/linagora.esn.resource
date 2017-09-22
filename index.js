@@ -17,8 +17,8 @@ module.exports = new AwesomeModule(MODULE_NAME, {
 
   states: {
     lib: function(dependencies, callback) {
-      const api = require('./backend/webserver/api')(dependencies);
       const lib = require('./backend/lib')(dependencies);
+      const api = require('./backend/webserver/api')(dependencies);
 
       return callback(null, {
         api, lib

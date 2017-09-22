@@ -1,4 +1,7 @@
-module.exports = () => {
+module.exports = dependencies => {
+  const logger = dependencies('logger');
+  const resourceLib = require('../../../lib/resource')(dependencies);
+
   return {
     create,
     get,
@@ -8,7 +11,18 @@ module.exports = () => {
   };
 
   function create(req, res) {
-    res.status(201).json({});
+    const resource = req.body;
+
+    resource.creator = req.user._id;
+    resource.domain = req.user.domains[0].domain_id;
+
+    resourceLib.create(resource).then(result => {
+      logger.debug('Resource has been created with id', result.id);
+      res.status(201).json(result);
+    }).catch(err => {
+      logger.error('Error while creating resource', err);
+      res.status(500).json({error: {status: 500, message: 'Server Error', details: 'Error while creating the resource'}});
+    });
   }
 
   function get(req, res) {
@@ -16,14 +30,18 @@ module.exports = () => {
   }
 
   function list(req, res) {
-    res.status(200).json([]);
+    notImplemented(res);
   }
 
   function update(req, res) {
-    res.status(200).json({});
+    notImplemented(res);
   }
 
   function remove(req, res) {
-    res.send(204);
+    notImplemented(res);
+  }
+
+  function notImplemented(res) {
+    res.status(501).json({error: {status: 501, message: 'Not implemented'}});
   }
 };

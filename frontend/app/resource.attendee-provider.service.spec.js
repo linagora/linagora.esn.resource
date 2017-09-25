@@ -67,16 +67,19 @@ describe('The esnResourceAttendeeProvider service', function() {
         expect(esnResourceAPIClient.search).to.have.been.calledWith(query, limit, offset);
         expect(result).to.shallowDeepEqual([
           {
+            id: resource1._id,
             _id: resource1._id,
             displayName: resource1.name,
             email: resource1._id + '@' + domain1.name
           },
           {
+            id: resource2._id,
             _id: resource2._id,
             displayName: resource2.name,
             email: resource2._id + '@' + domain1.name
           },
           {
+            id: resource3._id,
             _id: resource3._id,
             displayName: resource3.name,
             email: resource3._id + '@' + domain2.name

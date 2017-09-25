@@ -13,6 +13,7 @@
             return response.data.map(function(resource) {
               resource.email = resource._id + '@' + resource.domain.name;
               resource.displayName = resource.name;
+              resource.id = resource._id;
 
               return resource;
             });
@@ -23,7 +24,7 @@
             return $q.when([]);
           });
       },
-      templateUrl: '/linagora.esn.resource/app/resource.attendee.html'
+      templateUrl: '/linagora.esn.resource/app/resource-attendee-template.html'
     };
   }
 })(angular);

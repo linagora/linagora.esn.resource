@@ -1,9 +1,12 @@
 const request = require('supertest');
 const { expect } = require('chai');
 const { ObjectId } = require('bson');
+const RESOURCE = require('../../../backend/lib/constants').RESOURCE;
+const sinon = require('sinon');
 
 describe('The resource API', function() {
   let user, resource, domain;
+  let pubsubLocal, publishSpy;
   const password = 'secret';
   const moduleName = 'linagora.esn.resource';
 
@@ -38,6 +41,10 @@ describe('The resource API', function() {
 
     expressApp.use('/api', this.helpers.modules.current.lib.api);
     this.app = this.helpers.modules.getWebServer(expressApp);
+  });
+
+  beforeEach(function() {
+    pubsubLocal = pubsubLocal || this.helpers.requireBackend('core').pubsub.local;
   });
 
   afterEach(function(done) {
@@ -118,8 +125,11 @@ describe('The resource API', function() {
       this.helpers.api.requireLogin(this.app, 'post', '/api/resources', done);
     });
 
-    it('should create the resource and send it back', function(done) {
+    it('should create the resource, publish it locally on topic \'resource:created\' and send it back', function(done) {
       const self = this;
+
+      publishSpy = sinon.spy();
+      pubsubLocal.topic(RESOURCE.CREATED).publish = publishSpy;
 
       self.helpers.api.loginAsUser(self.app, user.emails[0], password, (err, requestAsMember) => {
         if (err) {
@@ -134,6 +144,16 @@ describe('The resource API', function() {
             if (err) {
               return done(err);
             }
+
+            expect(publishSpy).to.have.been.calledWith(sinon.match({
+              _id: sinon.match.any,
+              creator: sinon.match.any,
+              domain: sinon.match.any,
+              name: resource.name,
+              description: resource.description,
+              type: resource.type,
+              timestamps: {creation: sinon.match.any}
+            }));
 
             expect(res.body).to.shallowDeepEqual({
               name: resource.name,

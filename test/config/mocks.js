@@ -1,6 +1,7 @@
 'use strict';
 
 angular.module('esn.form.helper', []);
+angular.module('esn.attendee', []).factory('attendeeService', function() {});
 angular.module('pascalprecht.translate', [])
   .provider('$translate', function() {
     return {

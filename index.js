@@ -1,8 +1,12 @@
 'use strict';
 
+const path = require('path');
+const glob = require('glob-all');
 const AwesomeModule = require('awesome-module');
 const Dependency = AwesomeModule.AwesomeModuleDependency;
 const MODULE_NAME = 'linagora.esn.resource';
+const FRONTEND_JS_PATH = path.join(__dirname, '/frontend/app/');
+const APP_ENTRY_POINT = path.join(FRONTEND_JS_PATH, 'app.js');
 
 module.exports = new AwesomeModule(MODULE_NAME, {
   dependencies: [
@@ -28,8 +32,14 @@ module.exports = new AwesomeModule(MODULE_NAME, {
     deploy: function(dependencies, callback) {
       const webserverWrapper = dependencies('webserver-wrapper');
       const app = require('./backend/webserver/application')(dependencies);
+      const frontendFullPathModules = glob.sync([
+        APP_ENTRY_POINT,
+        FRONTEND_JS_PATH + '**/!(*spec).js'
+      ]);
+      const frontendUriModules = frontendFullPathModules.map(filepath => filepath.replace(FRONTEND_JS_PATH, ''));
 
       app.use('/api', this.api);
+      webserverWrapper.injectAngularAppModules(MODULE_NAME, frontendUriModules, [MODULE_NAME], ['esn'], {localJsFiles: frontendFullPathModules});
       webserverWrapper.addApp(MODULE_NAME, app);
 
       callback();

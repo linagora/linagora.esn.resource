@@ -27,6 +27,7 @@ describe('The esnResourceAttendeeProvider service', function() {
   it('should contain the right objectType', function() {
     expect(esnResourceAttendeeProvider.objectType).to.equal(ESN_RESOURCE_OBJECT_TYPE);
     expect(esnResourceAttendeeProvider.searchAttendee).to.be.a.function;
+    expect(esnResourceAttendeeProvider.templateUrl).to.be.defined;
   });
 
   describe('The searchAttendee function', function() {

@@ -22,7 +22,8 @@
 
             return $q.when([]);
           });
-      }
+      },
+      templateUrl: '/linagora.esn.resource/app/resource.attendee.html'
     };
   }
 })(angular);

@@ -10,7 +10,12 @@
       searchAttendee: function(query, limit, offset) {
         return esnResourceAPIClient.search(query, limit, offset)
           .then(function(response) {
-            return response.data;
+            return response.data.map(function(resource) {
+              resource.email = resource._id + '@' + resource.domain.name;
+              resource.displayName = resource.name;
+
+              return resource;
+            });
           })
           .catch(function(err) {
             $log.error('Error while searching for resources', err);

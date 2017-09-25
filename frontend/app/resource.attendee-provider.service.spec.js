@@ -50,14 +50,37 @@ describe('The esnResourceAttendeeProvider service', function() {
     });
 
     it('should resolve with esnResourceAPIClient.search result', function(done) {
-      var data = [1, 2, 3];
-      var response = {data: data};
+      var domain1 = {
+        name: 'open-paas.org'
+      };
+      var domain2 = {
+        name: 'github.com'
+      };
+      var resource1 = {domain: domain1, name: 'Room 1', _id: 1};
+      var resource2 = {domain: domain1, name: 'Room 2', _id: 2};
+      var resource3 = {domain: domain2, name: 'Room 3', _id: 3};
+      var data = [resource1, resource2, resource3];
 
-      esnResourceAPIClient.search = sinon.stub().returns($q.when(response));
+      esnResourceAPIClient.search = sinon.stub().returns($q.when({data: data}));
       esnResourceAttendeeProvider.searchAttendee(query, limit, offset).then(function(result) {
         expect(esnResourceAPIClient.search).to.have.been.calledWith(query, limit, offset);
-        expect(result).to.be.an('array');
-        expect(result).to.deep.equals(data);
+        expect(result).to.shallowDeepEqual([
+          {
+            _id: resource1._id,
+            displayName: resource1.name,
+            email: resource1._id + '@' + domain1.name
+          },
+          {
+            _id: resource2._id,
+            displayName: resource2.name,
+            email: resource2._id + '@' + domain1.name
+          },
+          {
+            _id: resource3._id,
+            displayName: resource3.name,
+            email: resource3._id + '@' + domain2.name
+          }
+        ]);
         done();
       }, done);
 

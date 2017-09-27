@@ -13,6 +13,10 @@ module.exports = dependencies => {
     middleware.canCreateResource,
     controller.create);
 
+  router.get('/',
+    authorizationMW.requiresAPILogin,
+    controller.list);
+
   router.get('/:id',
     authorizationMW.requiresAPILogin,
     middleware.canReadResource,

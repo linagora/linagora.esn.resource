@@ -25,6 +25,6 @@ module.exports = dependencies => {
   }
 
   function get(id) {
-    return ResourceModel.findById(id);
+    return ResourceModel.findById(id).populate('domain');
   }
 };

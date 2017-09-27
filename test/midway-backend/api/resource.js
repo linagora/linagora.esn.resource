@@ -96,11 +96,12 @@ describe('The resource API', function() {
             expect(res.body).to.shallowDeepEqual({
               _id: resourceToGet.id,
               creator: user.id,
-              domain: domain.id,
               name: resource.name,
+              domain: {_id: domain._id.toString()},
               description: resource.description,
               type: resource.type
             });
+
             done();
           });
         });

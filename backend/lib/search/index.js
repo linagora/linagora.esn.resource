@@ -2,10 +2,12 @@ const { SEARCH } = require('../constants');
 
 module.exports = dependencies => {
   const elasticsearch = dependencies('elasticsearch');
+  const listener = require('./searchHandler')(dependencies);
   const logger = dependencies('logger');
 
   return {
-    search
+    search,
+    listen
   };
 
   function search(query) {
@@ -84,5 +86,10 @@ module.exports = dependencies => {
         });
       });
     });
+  }
+
+  function listen() {
+    logger.info('Subscribing to event updates for indexing');
+    listener.register();
   }
 };

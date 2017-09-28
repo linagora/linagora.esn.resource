@@ -1,8 +1,28 @@
 const { expect } = require('chai');
 const sinon = require('sinon');
+const mockery = require('mockery');
+const _ = require('lodash');
 
 describe('The search lib', function() {
   let total, offset, limit, hits, query;
+  let pubsubListen, logger, elasticsearch;
+
+  beforeEach(function() {
+    logger = {
+      error: () => {},
+      debug: () => {},
+      info: () => {},
+      warning: () => {}
+    };
+    elasticsearch = {};
+
+    this.moduleHelpers.addDep('logger', logger);
+    this.moduleHelpers.addDep('elasticsearch', elasticsearch);
+
+    pubsubListen = sinon.spy();
+
+    mockery.registerMock('./pubsub', _.constant({listen: pubsubListen}));
+  });
 
   beforeEach(function() {
     total = 50;
@@ -29,6 +49,7 @@ describe('The search lib', function() {
           size: limit,
           body: sinon.match.object
         });
+
         expect(searchResult).to.deep.equals({ total_count: total, list: hits });
 
         done();
@@ -47,6 +68,20 @@ describe('The search lib', function() {
           expect(err).to.equal(error);
           done();
         });
+    });
+  });
+
+  describe('The listen function', function() {
+    it('should register listeners', function() {
+      const register = sinon.spy();
+
+      mockery.registerMock('./searchHandler', _.constant({register: register}));
+
+      const module = require('../../../../backend/lib/search')(this.moduleHelpers.dependencies);
+
+      module.listen();
+
+      expect(register).to.have.been.calledOnce;
     });
   });
 });

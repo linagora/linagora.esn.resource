@@ -13,7 +13,7 @@ module.exports = dependencies => {
 
   function getOptions() {
     return {
-      resources: {
+      events: {
         add: RESOURCE.CREATED
       },
       denormalize,

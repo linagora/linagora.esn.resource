@@ -22,7 +22,7 @@ describe('The events listener module', function() {
       elasticsearch = {
         listeners: {
           addListener: options => {
-            expect(options.resources.add).to.exist;
+            expect(options.events.add).to.exist;
             expect(options.denormalize).to.be.a.function;
             expect(options.getId).to.be.a.function;
             expect(options.type).to.exist;

@@ -51,6 +51,144 @@ describe('The resource API', function() {
     this.helpers.api.cleanDomainDeployment(this.models, done);
   });
 
+  describe('GET /', function() {
+    let resources, offset, limit;
+
+    beforeEach(function(done) {
+      const date = new Date();
+      let seconds = 0;
+      const self = this;
+      const names = ['foo', 'bar', 'baz', 'qux', 'quux', 'corge', 'grault', 'garply', 'waldo', 'fred', 'plugh', 'xyzzy', 'thud'];
+
+      offset = 0;
+      limit = 10;
+
+      Promise.all(names.map(create)).then(result => {
+        resources = result;
+        done();
+      }).catch(done);
+
+      function create(name) {
+        const creation = new Date(date);
+
+        creation.setSeconds(seconds++);
+
+        const resource = {
+          name,
+          description: `The resource with name ${name}`,
+          type: 'calendar-resource',
+          domain: domain._id,
+          creator: new ObjectId(),
+          timestamps: {
+            creation
+          }
+        };
+
+        return self.helpers.modules.current.lib.lib.resource.create(resource);
+      }
+    });
+
+    afterEach(function(done) {
+      this.helpers.modules.current.lib.lib.db.ResourceModel.remove({}).then(() => done(), done);
+    });
+
+    it('should 401 if not logged in', function(done) {
+      this.helpers.api.requireLogin(this.app, 'get', '/api/resources', done);
+    });
+
+    it('should return the number of requested resources defined with ?limit', function(done) {
+      const self = this;
+
+      limit = 5;
+      self.helpers.api.loginAsUser(self.app, user.emails[0], password, (err, requestAsMember) => {
+        if (err) {
+          return done(err);
+        }
+        const req = requestAsMember(request(self.app).get(`/api/resources?offset=${offset}&limit=${limit}`));
+
+        req.expect(200);
+        req.end((err, res) => {
+          if (err) {
+            return done(err);
+          }
+
+          expect(res.body).to.be.an('array').and.to.have.lengthOf(limit);
+          done();
+        });
+      });
+    });
+
+    it('should return resources based on defined offset', function(done) {
+      const self = this;
+
+      limit = 5;
+      offset = 10;
+      self.helpers.api.loginAsUser(self.app, user.emails[0], password, (err, requestAsMember) => {
+        if (err) {
+          return done(err);
+        }
+        const req = requestAsMember(request(self.app).get(`/api/resources?offset=${offset}&limit=${limit}`));
+
+        req.expect(200);
+        req.end((err, res) => {
+          if (err) {
+            return done(err);
+          }
+
+          expect(res.body).to.be.an('array').and.to.have.lengthOf(resources.length - offset);
+          done();
+        });
+      });
+    });
+
+    it('should return empty array when pagination is over number of resources', function(done) {
+      offset = resources.length;
+      const self = this;
+
+      self.helpers.api.loginAsUser(self.app, user.emails[0], password, (err, requestAsMember) => {
+        if (err) {
+          return done(err);
+        }
+        const req = requestAsMember(request(self.app).get(`/api/resources?offset=${offset}&limit=${limit}`));
+
+        req.expect(200);
+        req.end((err, res) => {
+          if (err) {
+            return done(err);
+          }
+
+          expect(res.body).to.be.an('array').and.to.be.empty;
+          done();
+        });
+      });
+    });
+
+    it('should return the resources in the right order', function(done) {
+      const self = this;
+
+      limit = 5;
+      self.helpers.api.loginAsUser(self.app, user.emails[0], password, (err, requestAsMember) => {
+        if (err) {
+          return done(err);
+        }
+        const req = requestAsMember(request(self.app).get(`/api/resources?offset=${offset}&limit=${limit}`));
+
+        req.expect(200);
+        req.end((err, res) => {
+          if (err) {
+            return done(err);
+          }
+
+          expect(new Date(res.body[0].timestamps.creation)).to.afterTime(new Date(res.body[1].timestamps.creation));
+          expect(new Date(res.body[1].timestamps.creation)).to.afterTime(new Date(res.body[2].timestamps.creation));
+          expect(new Date(res.body[2].timestamps.creation)).to.afterTime(new Date(res.body[3].timestamps.creation));
+          expect(new Date(res.body[3].timestamps.creation)).to.afterTime(new Date(res.body[4].timestamps.creation));
+          done();
+        });
+      });
+    });
+  });
+
   describe('GET /:id', function() {
     it('should 401 if not logged in', function(done) {
       this.helpers.api.requireLogin(this.app, 'get', '/api/resources/123', done);

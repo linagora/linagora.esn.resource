@@ -25,8 +25,8 @@ module.exports = dependencies => {
 
   router.delete('/:id',
     authorizationMW.requiresAPILogin,
-    middleware.canDeleteResource,
     middleware.load,
+    middleware.canDeleteResource,
     controller.remove);
 
   router.put('/:id',

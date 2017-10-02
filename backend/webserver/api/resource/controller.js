@@ -70,7 +70,20 @@ module.exports = dependencies => {
   }
 
   function remove(req, res) {
-    notImplemented(res);
+    const resource = req.resource;
+
+    resourceLib.remove(resource._id).then(result => {
+      if (!result) {
+        logger.debug(`Resource ${resource._id} has not been removed`);
+        res.status(404).json({error: {status: 404, message: 'Not found'}});
+      }
+
+      logger.debug(`Resource ${resource._id} has been removed`);
+      res.status(204).send();
+    }).catch(err => {
+      logger.error('Error while removing resource', err);
+      res.status(500).json({error: {status: 500, message: 'Server Error', details: 'Error while removing the resource'}});
+    });
   }
 
   function search(req, res) {

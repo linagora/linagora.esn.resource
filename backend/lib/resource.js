@@ -7,7 +7,8 @@ module.exports = dependencies => {
 
   return {
     create,
-    get
+    get,
+    remove
   };
 
   function create(resource) {
@@ -22,6 +23,22 @@ module.exports = dependencies => {
 
         return res;
       });
+  }
+
+  function remove(resourceId) {
+    if (!resourceId) {
+      return Promise.reject(new Error('Resource id is required'));
+    }
+
+    return ResourceModel.findByIdAndRemove(resourceId).exec().then(removed => {
+      if (!removed) {
+        return Promise.reject(new Error('Resource does not exist and can not be removed'));
+      }
+
+      pubsub.local.topic(RESOURCE.DELETED).publish(removed);
+
+      return removed;
+    });
   }
 
   function get(id) {

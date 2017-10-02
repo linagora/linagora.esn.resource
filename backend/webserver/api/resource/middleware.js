@@ -23,6 +23,10 @@ module.exports = dependencies => {
   }
 
   function canDeleteResource(req, res, next) {
+    if (!userIsResourceCreator(req.user, req.resource)) {
+      return res.status(403).json({error: {code: 403, message: 'Forbidden', details: `You can not delete resource ${req.resource.id}`}});
+    }
+
     next();
   }
 
@@ -40,5 +44,9 @@ module.exports = dependencies => {
       logger.error(details, err);
       res.status(500).json({error: {status: 500, message: 'Server Error', details}});
     });
+  }
+
+  function userIsResourceCreator(user, resource) {
+    return user._id.equals(resource.creator);
   }
 };

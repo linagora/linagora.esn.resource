@@ -114,10 +114,83 @@ describe('The resource API', function() {
       this.helpers.api.requireLogin(this.app, 'delete', '/api/resources/123', done);
     });
 
-    it('should 404 when resource does not exists', function() {
+    it('should 404 when resource does not exists', function(done) {
+      const self = this;
+      const id = new ObjectId();
+
+      this.helpers.api.loginAsUser(this.app, user.emails[0], password, (err, requestAsMember) => {
+        if (err) {
+          return done(err);
+        }
+        const req = requestAsMember(request(self.app).delete(`/api/resources/${id}`));
+
+        req.expect(404, done);
+      });
     });
 
-    it('should 204', function() {
+    it('should 403 when user is not the resource creator', function(done) {
+      const self = this;
+
+      resource.creator = new ObjectId();
+      resource.domain = domain._id;
+
+      this.helpers.modules.current.lib.lib.resource.create(resource)
+        .then(test)
+        .catch(done);
+
+      function test(created) {
+        self.helpers.api.loginAsUser(self.app, user.emails[0], password, (err, requestAsMember) => {
+          if (err) {
+            return done(err);
+          }
+          const req = requestAsMember(request(self.app).delete(`/api/resources/${created._id}`));
+
+          req.expect(403, done);
+        });
+      }
+    });
+
+    it('should 204 and publish it locally on `resource:deleted`', function(done) {
+      const self = this;
+
+      resource.creator = user._id;
+      resource.domain = domain._id;
+      publishSpy = sinon.spy();
+      pubsubLocal.topic(RESOURCE.DELETED).publish = publishSpy;
+
+      this.helpers.modules.current.lib.lib.resource.create(resource)
+        .then(test)
+        .catch(done);
+
+      function test(created) {
+        self.helpers.api.loginAsUser(self.app, user.emails[0], password, (err, requestAsMember) => {
+          if (err) {
+            return done(err);
+          }
+          const req = requestAsMember(request(self.app).delete(`/api/resources/${created._id}`));
+
+          req.expect(204);
+          req.end(err => {
+            if (err) {
+              return done(err);
+            }
+
+            return self.helpers.modules.current.lib.lib.resource.get(created._id).then(result => {
+              expect(result).to.be.null;
+              expect(publishSpy).to.have.been.calledWith(sinon.match({
+                _id: created._id,
+                creator: sinon.match.any,
+                domain: sinon.match.any,
+                name: created.name,
+                description: created.description,
+                type: created.type,
+                timestamps: {creation: sinon.match.any}
+              }));
+              done();
+            });
+          });
+        });
+      }
     });
   });
 

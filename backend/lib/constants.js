@@ -2,7 +2,8 @@ module.exports = {
   EVENTS: {
   },
   RESOURCE: {
-    CREATED: 'resource:created'
+    CREATED: 'resource:created',
+    DELETED: 'resource:deleted'
   },
   SEARCH: {
     INDEX_NAME: 'resources.idx',

@@ -14,7 +14,8 @@ module.exports = dependencies => {
   function getOptions() {
     return {
       events: {
-        add: RESOURCE.CREATED
+        add: RESOURCE.CREATED,
+        remove: RESOURCE.DELETED
       },
       denormalize,
       getId,

@@ -1,11 +1,11 @@
 const request = require('supertest');
 const { expect } = require('chai');
 const { ObjectId } = require('bson');
-const RESOURCE = require('../../../backend/lib/constants').RESOURCE;
+const { RESOURCE } = require('../../../backend/lib/constants');
 const sinon = require('sinon');
 
 describe('The resource API', function() {
-  let user, resource, domain;
+  let user, user2, resource, domain;
   let pubsubLocal, publishSpy;
   const password = 'secret';
   const moduleName = 'linagora.esn.resource';
@@ -28,9 +28,12 @@ describe('The resource API', function() {
         if (err) {
           return done(err);
         }
+
         user = models.users[0];
+        user2 = models.users[1];
         domain = models.domain;
         self.models = models;
+
         done();
       });
     });
@@ -104,6 +107,7 @@ describe('The resource API', function() {
         if (err) {
           return done(err);
         }
+
         const req = requestAsMember(request(self.app).get(`/api/resources?offset=${offset}&limit=${limit}`));
 
         req.expect(200);
@@ -127,6 +131,7 @@ describe('The resource API', function() {
         if (err) {
           return done(err);
         }
+
         const req = requestAsMember(request(self.app).get(`/api/resources?offset=${offset}&limit=${limit}`));
 
         req.expect(200);
@@ -149,6 +154,7 @@ describe('The resource API', function() {
         if (err) {
           return done(err);
         }
+
         const req = requestAsMember(request(self.app).get(`/api/resources?offset=${offset}&limit=${limit}`));
 
         req.expect(200);
@@ -171,6 +177,7 @@ describe('The resource API', function() {
         if (err) {
           return done(err);
         }
+
         const req = requestAsMember(request(self.app).get(`/api/resources?offset=${offset}&limit=${limit}`));
 
         req.expect(200);
@@ -202,6 +209,7 @@ describe('The resource API', function() {
         if (err) {
           return done(err);
         }
+
         const req = requestAsMember(request(self.app).get(`/api/resources/${id}`));
 
         req.expect(404, done);
@@ -223,6 +231,7 @@ describe('The resource API', function() {
           if (err) {
             return done(err);
           }
+
           const req = requestAsMember(request(self.app).get(`/api/resources/${resourceToGet._id}`));
 
           req.expect(200);
@@ -260,6 +269,7 @@ describe('The resource API', function() {
         if (err) {
           return done(err);
         }
+
         const req = requestAsMember(request(self.app).delete(`/api/resources/${id}`));
 
         req.expect(404, done);
@@ -281,6 +291,7 @@ describe('The resource API', function() {
           if (err) {
             return done(err);
           }
+
           const req = requestAsMember(request(self.app).delete(`/api/resources/${created._id}`));
 
           req.expect(403, done);
@@ -305,6 +316,7 @@ describe('The resource API', function() {
           if (err) {
             return done(err);
           }
+
           const req = requestAsMember(request(self.app).delete(`/api/resources/${created._id}`));
 
           req.expect(204);
@@ -324,6 +336,7 @@ describe('The resource API', function() {
                 type: created.type,
                 timestamps: {creation: sinon.match.any}
               }));
+
               done();
             });
           });
@@ -372,6 +385,7 @@ describe('The resource API', function() {
               description: resource.description,
               type: resource.type
             });
+
             done();
           });
       });
@@ -379,10 +393,129 @@ describe('The resource API', function() {
   });
 
   describe('PUT /:id', function() {
-    it('should 404 when resource does not exists', function() {
+    it('should 401 if not logged in', function(done) {
+      this.helpers.api.requireLogin(this.app, 'put', '/api/resources/123', done);
     });
 
-    it('should update the resource and send the updated one', function() {
+    it('should 404 when resource does not exists', function(done) {
+      const id = new ObjectId();
+      const self = this;
+
+      this.helpers.api.loginAsUser(this.app, user.emails[0], password, (err, requestAsMember) => {
+        if (err) {
+          return done(err);
+        }
+
+        const req = requestAsMember(request(self.app).put(`/api/resources/${id}`));
+
+        req.expect(404, done);
+      });
+    });
+
+    it('should 403 when a user not creator try to update resource`', function(done) {
+      const self = this;
+      const resourceUpdated = {
+        name: 'resource updated',
+        description: 'description updated',
+        type: resource.type
+      };
+
+      resource.creator = user2._id;
+      resource.domain = domain._id;
+      publishSpy = sinon.spy();
+      pubsubLocal.topic(RESOURCE.UPDATED).publish = publishSpy;
+
+      this.helpers.modules.current.lib.lib.resource.create(resource)
+        .then(test)
+        .catch(done);
+
+      function test(created) {
+        self.helpers.api.loginAsUser(self.app, user.emails[0], password, (err, requestAsMember) => {
+          if (err) {
+            return done(err);
+          }
+
+          const req = requestAsMember(request(self.app).put(`/api/resources/${created._id}`));
+
+          req.send(resourceUpdated);
+          req.expect(403);
+          req.end(err => {
+            if (err) {
+              return done(err);
+            }
+
+            return self.helpers.modules.current.lib.lib.resource.get(created._id).then(result => {
+              expect(result).to.shallowDeepEqual({
+                name: created.name,
+                description: created.description,
+                type: resource.type
+              });
+
+              expect(publishSpy).to.not.have.been.called;
+
+              done();
+            });
+          });
+        });
+      }
+    });
+
+    it('should 200 and publish it locally on `resource:updated`', function(done) {
+      const self = this;
+      const resourceUpdated = {
+        name: 'resource updated',
+        description: 'description updated',
+        type: resource.type
+      };
+
+      resource.creator = user._id;
+      resource.domain = domain._id;
+      publishSpy = sinon.spy();
+      pubsubLocal.topic(RESOURCE.UPDATED).publish = publishSpy;
+
+      this.helpers.modules.current.lib.lib.resource.create(resource)
+        .then(test)
+        .catch(done);
+
+      function test(created) {
+        self.helpers.api.loginAsUser(self.app, user.emails[0], password, (err, requestAsMember) => {
+          if (err) {
+            return done(err);
+          }
+
+          const req = requestAsMember(request(self.app).put(`/api/resources/${created._id}`));
+
+          req.send(resourceUpdated);
+          req.expect(200);
+          req.end(err => {
+            if (err) {
+              return done(err);
+            }
+
+            return self.helpers.modules.current.lib.lib.resource.get(created._id).then(result => {
+              expect(result).to.shallowDeepEqual({
+                name: resourceUpdated.name,
+                description: resourceUpdated.description,
+                type: resource.type
+              });
+              expect(publishSpy).to.have.been.calledWith(sinon.match({
+                _id: created._id,
+                creator: sinon.match.any,
+                domain: sinon.match.any,
+                name: resourceUpdated.name,
+                description: resourceUpdated.description,
+                type: created.type,
+                timestamps: {
+                  creation: sinon.match.any,
+                  updatedAt: sinon.match.any
+                }
+              }));
+
+              done();
+            });
+          });
+        });
+      }
     });
   });
 });

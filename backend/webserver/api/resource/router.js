@@ -31,8 +31,8 @@ module.exports = dependencies => {
 
   router.put('/:id',
     authorizationMW.requiresAPILogin,
-    middleware.canUpdateResource,
     middleware.load,
+    middleware.canUpdateResource,
     controller.update);
 
   return router;

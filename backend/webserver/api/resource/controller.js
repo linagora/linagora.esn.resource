@@ -46,12 +46,17 @@ module.exports = dependencies => {
       });
   }
 
-  function notImplemented(res) {
-    res.status(501).json({error: {status: 501, message: 'Not implemented'}});
-  }
-
   function update(req, res) {
-    notImplemented(res);
+    const resourceUpdated = req.body;
+    const resourceId = req.params.id;
+
+    resourceLib.update(resourceId, resourceUpdated).then(result => {
+      logger.debug(`Resource with id ${result._id} has been updated`);
+      res.status(200).json(result);
+    }).catch(err => {
+      logger.error('Error while updating resource', err);
+      res.status(500).json({error: {status: 500, message: 'Server Error', details: 'Error while updating the resource'}});
+    });
   }
 
   function remove(req, res) {

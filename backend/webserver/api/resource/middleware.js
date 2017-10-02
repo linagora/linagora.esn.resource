@@ -19,6 +19,10 @@ module.exports = dependencies => {
   }
 
   function canUpdateResource(req, res, next) {
+    if (!userIsResourceCreator(req.user, req.resource)) {
+      return res.status(403).json({error: {code: 403, message: 'Forbidden', details: `You can not update resource ${req.resource.id}`}});
+    }
+
     next();
   }
 

@@ -3,6 +3,7 @@ module.exports = {
   },
   RESOURCE: {
     CREATED: 'resource:created',
+    UPDATED: 'resource:updated',
     DELETED: 'resource:deleted'
   },
   SEARCH: {

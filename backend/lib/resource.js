@@ -1,6 +1,6 @@
 module.exports = dependencies => {
   const mongoose = dependencies('db').mongo.mongoose;
-  const {RESOURCE} = require('./constants');
+  const { RESOURCE, DEFAULT_LIMIT, DEFAULT_OFFSET } = require('./constants');
   const pubsub = dependencies('pubsub');
   const logger = dependencies('logger');
   const ResourceModel = mongoose.model('Resource');
@@ -8,6 +8,7 @@ module.exports = dependencies => {
   return {
     create,
     get,
+    getList,
     remove
   };
 
@@ -43,5 +44,15 @@ module.exports = dependencies => {
 
   function get(id) {
     return ResourceModel.findById(id).populate('domain');
+  }
+
+  function getList(options = {}) {
+    return ResourceModel
+      .find({})
+      .skip(+options.offset || DEFAULT_OFFSET)
+      .limit(+options.limit || DEFAULT_LIMIT)
+      .populate('domain')
+      .sort({ 'timestamps.creation': -1 })
+      .exec();
   }
 };

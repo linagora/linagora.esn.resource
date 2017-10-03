@@ -11,5 +11,7 @@ module.exports = {
     DEFAULT_LIMIT: 20,
     DEFAULT_SORT_KEY: 'name',
     DEFAULT_SORT_ORDER: 'desc'
-  }
+  },
+  DEFAULT_LIMIT: 20,
+  DEFAULT_OFFSET: 0
 };

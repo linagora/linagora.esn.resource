@@ -38,27 +38,12 @@ module.exports = dependencies => {
   }
 
   function getList(req, res) {
-    // TODO: Remove me, fake for 'almost done' integration tests
-    res.status(200).json([
-      {
-        _id: 'resourceid1',
-        name: 'Room 1',
-        description: 'A room',
-        domain: {
-          _id: '123',
-          name: 'open-paas.org'
-        }
-      },
-      {
-        _id: 'resourceid2',
-        name: 'Room 2',
-        description: 'Another room',
-        domain: {
-          _id: '123',
-          name: 'open-paas.org'
-        }
-      }
-    ]);
+    resourceLib.getList({ limit: req.query.limit, offset: req.query.offset })
+      .then(resources => res.status(200).json(resources || []))
+      .catch(err => {
+        logger.error('Error while getting resources', err);
+        res.status(500).json({error: {code: 500, message: 'Server Error', details: 'Error while getting resources'}});
+      });
   }
 
   function notImplemented(res) {

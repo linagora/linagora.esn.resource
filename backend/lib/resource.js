@@ -9,6 +9,7 @@ module.exports = dependencies => {
     create,
     get,
     getList,
+    update,
     remove
   };
 
@@ -18,11 +19,11 @@ module.exports = dependencies => {
     }
 
     return new ResourceModel(resource).save()
-      .then(res => {
-        pubsub.local.topic(RESOURCE.CREATED).publish(res);
-        logger.debug(`Resource ${res._id} has been publish on ${RESOURCE.CREATED}`);
+      .then(created => {
+        pubsub.local.topic(RESOURCE.CREATED).publish(created);
+        logger.debug(`Resource ${created._id} has been publish on ${RESOURCE.CREATED}`);
 
-        return res;
+        return created;
       });
   }
 
@@ -54,5 +55,23 @@ module.exports = dependencies => {
       .populate('domain')
       .sort({ 'timestamps.creation': -1 })
       .exec();
+  }
+
+  function update(id, resource) {
+    if (!resource) {
+      return Promise.reject(new Error('Resource is required'));
+    }
+
+    resource.timestamps += {
+      updatedAt: Date.now()
+    };
+
+    return ResourceModel.findOneAndUpdate({_id: id}, resource, { new: true }).exec()
+      .then(updated => {
+          pubsub.local.topic(RESOURCE.UPDATED).publish(updated);
+          logger.debug(`Resource ${updated._id} has been publish on ${RESOURCE.UPDATED}`);
+
+          return updated;
+      });
   }
 };

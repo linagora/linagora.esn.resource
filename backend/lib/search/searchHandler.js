@@ -15,7 +15,8 @@ module.exports = dependencies => {
     return {
       events: {
         add: RESOURCE.CREATED,
-        remove: RESOURCE.DELETED
+        remove: RESOURCE.DELETED,
+        update: RESOURCE.UPDATED
       },
       denormalize,
       getId,

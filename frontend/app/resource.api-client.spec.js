@@ -14,6 +14,22 @@ describe('The esnResourceAPIClient service', function() {
     });
   });
 
+  describe('The create function', function() {
+    it('should call the REST API', function(done) {
+      var resource = {
+        name: 'The resource name',
+        description: 'The resource description',
+        type: 'calendar'
+      };
+
+      $httpBackend.expectPOST('/linagora.esn.resource/api/resources', resource).respond(201, {});
+      esnResourceAPIClient.create(resource).then(function() {
+        done();
+      }, done);
+      $httpBackend.flush();
+    });
+  });
+
   describe('The search function', function() {
     it('should call the REST API with right parameters', function(done) {
       var data = [1, 2, 3];

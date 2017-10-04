@@ -30,6 +30,21 @@ describe('The esnResourceAPIClient service', function() {
     });
   });
 
+  describe('The list function', function() {
+    it('should call the REST API with right parameters', function(done) {
+      var data = [1, 2, 3];
+      var creator = 'userId';
+      var limit = '10';
+      var offset = '50';
+
+      $httpBackend.expectGET('/linagora.esn.resource/api/resources?creator=userId&limit=10&offset=50').respond(data);
+      esnResourceAPIClient.list({limit: limit, offset: offset, creator: creator}).then(function() {
+        done();
+      }, done);
+      $httpBackend.flush();
+    });
+  });
+
   describe('The search function', function() {
     it('should call the REST API with right parameters', function(done) {
       var data = [1, 2, 3];

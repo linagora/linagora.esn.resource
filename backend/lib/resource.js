@@ -48,8 +48,14 @@ module.exports = dependencies => {
   }
 
   function getList(options = {}) {
+    const query = {};
+
+    if (options.type) {
+      query.type = options.type;
+    }
+
     return ResourceModel
-      .find({})
+      .find(query)
       .skip(+options.offset || DEFAULT_OFFSET)
       .limit(+options.limit || DEFAULT_LIMIT)
       .populate('domain')

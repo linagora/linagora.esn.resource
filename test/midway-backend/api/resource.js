@@ -194,6 +194,41 @@ describe('The resource API', function() {
         });
       });
     });
+
+    it('should return only the resource with the defined type', function(done) {
+      const self = this;
+      const type = 'Atypeonlymewillhave';
+      const resource = {
+        name: 'Foobar',
+        description: 'A description',
+        type: type,
+        domain: domain._id,
+        creator: new ObjectId()
+      };
+
+      self.helpers.modules.current.lib.lib.resource.create(resource).then(test);
+
+      function test(created) {
+        self.helpers.api.loginAsUser(self.app, user.emails[0], password, (err, requestAsMember) => {
+          if (err) {
+            return done(err);
+          }
+
+          const req = requestAsMember(request(self.app).get(`/api/resources?offset=${offset}&limit=${limit}&type=${type}`));
+
+          req.expect(200);
+          req.end((err, res) => {
+            if (err) {
+              return done(err);
+            }
+
+            expect(res.body).to.be.an('array').and.to.have.lengthOf(1);
+            expect(res.body[0]._id).to.equal(String(created._id));
+            done();
+          });
+        });
+      }
+    });
   });
 
   describe('GET /:id', function() {

@@ -41,6 +41,7 @@ module.exports = new AwesomeModule(MODULE_NAME, {
 
       app.use('/api', this.api);
       webserverWrapper.injectAngularAppModules(MODULE_NAME, frontendUriModules, [MODULE_NAME], ['esn'], {localJsFiles: frontendFullPathModules});
+      webserverWrapper.injectLess(MODULE_NAME, [path.join(FRONTEND_JS_PATH, 'resource.less')], 'esn');
       webserverWrapper.addApp(MODULE_NAME, app);
 
       callback();

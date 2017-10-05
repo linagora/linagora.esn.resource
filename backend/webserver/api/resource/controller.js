@@ -38,7 +38,7 @@ module.exports = dependencies => {
   }
 
   function getList(req, res) {
-    resourceLib.getList({ limit: req.query.limit, offset: req.query.offset })
+    resourceLib.getList(req.query)
       .then(resources => res.status(200).json(resources || []))
       .catch(err => {
         logger.error('Error while getting resources', err);

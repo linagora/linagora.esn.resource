@@ -425,6 +425,135 @@ describe('The resource API', function() {
           });
       });
     });
+
+    it('should 400 when administrator is not supported type', function(done) {
+      const self = this;
+
+      resource.administrators = [{id: 1, objectType: 'I am not a supported type'}];
+      publishSpy = sinon.spy();
+      pubsubLocal.topic(RESOURCE.CREATED).publish = publishSpy;
+
+      self.helpers.api.loginAsUser(self.app, user.emails[0], password, (err, requestAsMember) => {
+        if (err) {
+          return done(err);
+        }
+
+        requestAsMember(request(self.app)
+          .post('/api/resources'))
+          .send(resource)
+          .expect(400)
+          .end((err, res) => {
+            if (err) {
+              return done(err);
+            }
+
+            expect(publishSpy).to.not.have.been.called;
+            expect(res.body).to.shallowDeepEqual({
+              error: {
+                status: 400,
+                message: 'Bad request',
+                details: 'One or more administrators are invalid'
+              }
+            });
+            done();
+          });
+        });
+    });
+
+    it('should 400 when body.administrator is not an array', function(done) {
+      const self = this;
+
+      resource.administrators = 'I am not an array';
+      publishSpy = sinon.spy();
+      pubsubLocal.topic(RESOURCE.CREATED).publish = publishSpy;
+
+      self.helpers.api.loginAsUser(self.app, user.emails[0], password, (err, requestAsMember) => {
+        if (err) {
+          return done(err);
+        }
+
+        requestAsMember(request(self.app)
+          .post('/api/resources'))
+          .send(resource)
+          .expect(400)
+          .end((err, res) => {
+            if (err) {
+              return done(err);
+            }
+
+            expect(publishSpy).to.not.have.been.called;
+            expect(res.body).to.shallowDeepEqual({
+              error: {
+                status: 400,
+                message: 'Bad request',
+                details: 'administrators must be an array'
+              }
+            });
+            done();
+          });
+        });
+    });
+
+    it('should 400 when an administrator is invalid', function(done) {
+      const self = this;
+
+      resource.administrators = [{id: String(user._id), objectType: 'user'}, {id: 1, objectType: 'user'}];
+      publishSpy = sinon.spy();
+      pubsubLocal.topic(RESOURCE.CREATED).publish = publishSpy;
+
+      self.helpers.api.loginAsUser(self.app, user.emails[0], password, (err, requestAsMember) => {
+        if (err) {
+          return done(err);
+        }
+
+        requestAsMember(request(self.app)
+          .post('/api/resources'))
+          .send(resource)
+          .expect(400)
+          .end((err, res) => {
+            if (err) {
+              return done(err);
+            }
+
+            expect(publishSpy).to.not.have.been.called;
+            expect(res.body).to.shallowDeepEqual({
+              error: {
+                status: 400,
+                message: 'Bad request',
+                details: 'One or more administrators are invalid'
+              }
+            });
+            done();
+          });
+        });
+    });
+
+    it('should create with the given administrators', function(done) {
+      const self = this;
+
+      resource.administrators = [{id: String(user._id), objectType: 'user'}];
+      publishSpy = sinon.spy();
+      pubsubLocal.topic(RESOURCE.CREATED).publish = publishSpy;
+
+      self.helpers.api.loginAsUser(self.app, user.emails[0], password, (err, requestAsMember) => {
+        if (err) {
+          return done(err);
+        }
+
+        requestAsMember(request(self.app)
+          .post('/api/resources'))
+          .send(resource)
+          .expect(201)
+          .end(err => {
+            if (err) {
+              return done(err);
+            }
+
+            expect(publishSpy).to.have.been.called;
+            done();
+          });
+        });
+    });
   });
 
   describe('PUT /:id', function() {

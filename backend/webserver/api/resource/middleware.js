@@ -1,13 +1,15 @@
 module.exports = dependencies => {
   const logger = dependencies('logger');
   const resourceLib = require('../../../lib/resource')(dependencies);
+  const administatorLib = require('../../../lib/administrator')(dependencies);
 
   return {
     canCreateResource,
     canReadResource,
     canUpdateResource,
     canDeleteResource,
-    load
+    load,
+    validateAdministrators
   };
 
   function canCreateResource(req, res, next) {
@@ -52,5 +54,22 @@ module.exports = dependencies => {
 
   function userIsResourceCreator(user, resource) {
     return user._id.equals(resource.creator);
+  }
+
+  function validateAdministrators(req, res, next) {
+    req.body.administrators = req.body.administrators || [];
+
+    if (!Array.isArray(req.body.administrators)) {
+      return res.status(400).json({error: {status: 400, message: 'Bad request', details: 'administrators must be an array'}});
+    }
+
+    Promise.all(req.body.administrators.map(administatorLib.validateTuple))
+      .then(() => next())
+      .catch(err => {
+        const details = 'One or more administrators are invalid';
+
+        logger.error(details, err);
+        res.status(400).json({error: {status: 400, message: 'Bad request', details}});
+      });
   }
 };

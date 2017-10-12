@@ -11,6 +11,7 @@ module.exports = dependencies => {
   router.post('/',
     authorizationMW.requiresAPILogin,
     middleware.canCreateResource,
+    middleware.validateAdministrators,
     controller.create);
 
   router.get('/',

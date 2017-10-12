@@ -12,6 +12,41 @@ describe('The administrator lib', function() {
     this.getModule = () => require(this.moduleHelpers.backendPath + '/lib/administrator')(this.moduleHelpers.dependencies);
   });
 
+  describe('The resolve function', function() {
+    it('should reject when resource is undefined', function(done) {
+      this.getModule().resolve()
+        .then(() => done(new Error('Should not occur')))
+        .catch(err => {
+          expect(err.message).to.match(/resource is required/);
+          expect(memberResolver.resolve).to.not.have.been.called;
+          done();
+        });
+    });
+
+    it('should resolve with the supported administrators', function(done) {
+      const user1 = { objectType: 'user', id: 1 };
+      const user2 = { objectType: 'user', id: 2 };
+      const user3 = { objectType: 'unsupported objectType', id: 3 };
+      const resolved1 = {_id: user1.id};
+      const resolved2 = {_id: user2.id};
+
+      memberResolver.resolve.withArgs(sinon.match(user1)).returns(Promise.resolve(resolved1));
+      memberResolver.resolve.withArgs(sinon.match(user2)).returns(Promise.resolve(resolved2));
+
+      this.getModule().resolve({administrators: [user1, user2, user3]})
+        .then(users => {
+          expect(users).to.deep.include(resolved1);
+          expect(users).to.deep.include(resolved2);
+          expect(memberResolver.resolve).to.have.been.calledTwice;
+          expect(memberResolver.resolve).to.have.been.calledWith(sinon.match(user1));
+          expect(memberResolver.resolve).to.have.been.calledWith(sinon.match(user2));
+          expect(memberResolver.resolve).to.not.have.been.calledWith(sinon.match(user3));
+          done();
+        })
+        .catch(done);
+    });
+  });
+
   describe('The validateTuple function', function() {
     it('should reject when tuple is undefined', function(done) {
       this.getModule().validateTuple()

@@ -1,12 +1,22 @@
 const SUPPORTED_TYPES = ['user'];
 
 module.exports = dependencies => {
-  // this should be a tuple resolver...
   const tupleResolver = dependencies('collaboration').memberResolver;
 
   return {
+    resolve,
     validateTuple
   };
+
+  // Resolve all the administrators and send them back
+  function resolve(resource) {
+    if (!resource) {
+      return Promise.reject(new Error('resource is required'));
+    }
+    const administrators = (resource.administrators || []).filter(administrator => SUPPORTED_TYPES.indexOf(administrator.objectType) >= 0);
+
+    return Promise.all(administrators.map(tupleResolver.resolve));
+  }
 
   // for now support only users, we will add resolvers next
   function validateTuple(tuple) {

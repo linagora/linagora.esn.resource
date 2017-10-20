@@ -45,6 +45,19 @@ describe('The esnResourceAPIClient service', function() {
     });
   });
 
+  describe('The get function', function() {
+    it('should call the REST API with right parameters', function(done) {
+      var data = [1, 2, 3];
+      var id = 'resourceId';
+
+      $httpBackend.expectGET('/linagora.esn.resource/api/resources/' + id).respond(data);
+      esnResourceAPIClient.get(id).then(function() {
+        done();
+      }, done);
+      $httpBackend.flush();
+    });
+  });
+
   describe('The search function', function() {
     it('should call the REST API with right parameters', function(done) {
       var data = [1, 2, 3];

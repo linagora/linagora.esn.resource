@@ -7,12 +7,17 @@
   function esnResourceAPIClient(esnResourceRestangular) {
     return {
       create: create,
+      get: get,
       list: list,
       search: search
     };
 
     function create(resource) {
       return _getResources().post(resource);
+    }
+
+    function get(id) {
+      return _getResources().one(id).get();
     }
 
     function list(options) {

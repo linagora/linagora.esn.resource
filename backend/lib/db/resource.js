@@ -9,6 +9,7 @@ module.exports = dependencies => {
     type: {type: String, required: true},
     domain: {type: ObjectId, ref: 'Domain', required: true},
     creator: {type: ObjectId, ref: 'User', required: true},
+    icon: {type: String},
     administrators: [
       {
         objectType: {type: String, required: true},

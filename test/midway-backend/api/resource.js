@@ -81,6 +81,7 @@ describe('The resource API', function() {
           description: `The resource with name ${name}`,
           type: 'calendar-resource',
           domain: domain._id,
+          icon: 'niceIcon',
           creator: new ObjectId(),
           timestamps: {
             creation
@@ -256,6 +257,7 @@ describe('The resource API', function() {
 
       resource.creator = user._id;
       resource.domain = domain._id;
+      resource.icon = 'icon';
 
       this.helpers.modules.current.lib.lib.resource.create(resource)
       .then(test)
@@ -281,7 +283,8 @@ describe('The resource API', function() {
               name: resource.name,
               domain: {_id: domain._id.toString()},
               description: resource.description,
-              type: resource.type
+              type: resource.type,
+              icon: 'icon'
             });
 
             done();

@@ -1,7 +1,8 @@
-.resource-list
+.resource-list.card.fadeIn200ms
   infinite-list(load-more-elements='ctrl.loadMoreElements()', scroll-inside-container="ctrl.scrollInsideContainer")
-    div(ng-if="ctrl.elements.length > 0")
-      esn-resource-list-item(resource='resource', ng-repeat="resource in ctrl.elements")
+    .listview.lv-bordered.lv-lg(ng-if="ctrl.elements.length > 0")
+      .lv-body
+        esn-resource-list-item.lv-item.p-0.clickable(resource='resource', ng-repeat="resource in ctrl.elements")
   .empty-message(ng-if="!ctrl.elements.length && ctrl.infiniteScrollCompleted")
     .message
       | #{__('No resources')}

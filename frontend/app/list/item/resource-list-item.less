@@ -1,11 +1,35 @@
-.resource-list-item {
-  padding: 10px;
-
-  .name {
-    font-weight: 500;
+esn-resource-list-item {
+  .resource-list-item {
+    .flex-vertical-centered;
+  
+    padding: 10px;
+    font-size: 13px;
+  
+    .name {
+      font-weight: 500;
+    }
+  
+    .description {
+      font-size: 0.8em;
+    }
+  
+    
   }
+  .lv-actions {
+    li {
+      a {
+        color: #4C4C4C;
+        text-align: right;
+        padding: 8px 17px;
+        clear: both;
+        white-space: nowrap;
+        display: block;
 
-  .description {
-    font-size: 0.8em;
+        &:hover {
+          color: @m-black;
+          background-color: rgba(0, 0, 0, 0.075);
+        }
+      }
+    }
   }
 }

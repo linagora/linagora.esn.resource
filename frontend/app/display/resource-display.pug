@@ -6,8 +6,8 @@
         h4.modal-title {{ctrl.resource.name}}
       .modal-body
         .block
-          .title #{__('description')}
+          .title #{__('Description')}
           | {{ctrl.resource.description}}
         .block
-          .title #{__('administrators')}
+          .title #{__('Administrators')}
           esn-resource-administrator-list(administrators="ctrl.resource.administrators")

@@ -1,4 +1,7 @@
 {
   "Resource": "Ressource",
-  "No resources": "Pas de ressources"
+  "No resources": "Pas de ressources",
+  "Administrators": "Administrateurs",
+  "No administrator": "Pas d'administrateur",
+  "Details": "Détails"
 }

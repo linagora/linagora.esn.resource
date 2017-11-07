@@ -6,6 +6,9 @@
     'esn.session',
     'esn.user',
     'op.dynamicDirective',
+    'esn.lodash-wrapper',
+    'ui.router',
+    'mgcrea.ngStrap.modal',
     'restangular'
   ]);
 })(angular);

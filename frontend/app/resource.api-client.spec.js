@@ -72,4 +72,16 @@ describe('The esnResourceAPIClient service', function() {
       $httpBackend.flush();
     });
   });
+
+  describe('The remove function', function() {
+    it('should call the REST API', function(done) {
+      var resourceId = 'id';
+
+      $httpBackend.expectDELETE(`/linagora.esn.resource/api/resources/${resourceId}`).respond(201, {});
+      esnResourceAPIClient.remove(resourceId).then(function() {
+        done();
+      }, done);
+      $httpBackend.flush();
+    });
+  });
 });

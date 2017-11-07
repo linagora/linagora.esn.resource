@@ -7,6 +7,7 @@
   function esnResourceAPIClient(esnResourceRestangular) {
     return {
       create: create,
+      remove: remove,
       get: get,
       list: list,
       search: search
@@ -36,6 +37,10 @@
 
     function _getResources() {
       return esnResourceRestangular.all('resources');
+    }
+
+    function remove(id) {
+      return _getResources().one(id).remove();
     }
   }
 })(angular);

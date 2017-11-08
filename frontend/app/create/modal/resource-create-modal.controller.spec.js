@@ -5,7 +5,7 @@
 var expect = chai.expect;
 
 describe('The ESNResourceCreateFabController controller', function() {
-  var $q, $state, $controller, $rootScope, $scope, context, resource, esnResourceAPIClient, sessionMock, asyncAction, resourceType, ESN_RESOURCE;
+  var $q, $state, $controller, $rootScope, $scope, context, resource, esnResourceAPIClient, sessionMock, asyncAction, resourceType;
 
   beforeEach(function() {
     module('jadeTemplates');
@@ -37,12 +37,11 @@ describe('The ESNResourceCreateFabController controller', function() {
     });
   });
 
-  beforeEach(angular.mock.inject(function(_$state_, _$controller_, _$rootScope_, _$q_, _ESN_RESOURCE_, _esnResourceAPIClient_) {
+  beforeEach(angular.mock.inject(function(_$state_, _$controller_, _$rootScope_, _$q_, _esnResourceAPIClient_) {
     $state = _$state_;
     $controller = _$controller_;
     $rootScope = _$rootScope_;
     $q = _$q_;
-    ESN_RESOURCE = _ESN_RESOURCE_;
     esnResourceAPIClient = _esnResourceAPIClient_;
     $scope = $rootScope.$new();
   }));

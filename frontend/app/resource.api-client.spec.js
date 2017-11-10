@@ -77,7 +77,7 @@ describe('The esnResourceAPIClient service', function() {
     it('should call the REST API', function(done) {
       var resourceId = 'id';
 
-      $httpBackend.expectDELETE(`/linagora.esn.resource/api/resources/${resourceId}`).respond(201, {});
+      $httpBackend.expectDELETE('/linagora.esn.resource/api/resources/' + resourceId).respond(201, {});
       esnResourceAPIClient.remove(resourceId).then(function() {
         done();
       }, done);

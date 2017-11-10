@@ -4,7 +4,7 @@
 
 var expect = chai.expect;
 
-describe('The ESNResourceCreateFabController controller', function() {
+describe('The ESNResourceCreateController controller', function() {
   var $q, $state, $controller, $rootScope, $scope, context, resource, esnResourceAPIClient, sessionMock, asyncAction, resourceType;
 
   beforeEach(function() {

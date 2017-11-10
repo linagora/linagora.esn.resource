@@ -12,8 +12,9 @@
     self.resourceAdministrators = [];
     self.resourceTypes = ESN_RESOURCE.TYPES;
     self.defaultResourceType = 'resource';
-    self.selectedType = 'resource';
+    self.selectedType = self.type || 'resource';
     self.isSelected = isSelected;
+    self.openResourceCreateModal = openResourceCreateModal;
 
     function isSelected(type) {
       return type === self.selectedType;
@@ -43,6 +44,18 @@
         return esnResourceAPIClient.create(self.resource).finally(function() {
           $state.reload();
         });
+      });
+    }
+
+    function openResourceCreateModal() {
+      self.modal = $modal({
+        templateUrl: '/linagora.esn.resource/app/components/resource-form-modal/resource-form-modal.html',
+        controller: function() {
+          angular.extend(this, self);
+        },
+        backdrop: 'static',
+        placement: 'center',
+        controllerAs: 'ctrl'
       });
     }
   }

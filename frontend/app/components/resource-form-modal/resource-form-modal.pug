@@ -8,22 +8,25 @@
           h4.modal-title(ng-if='!ctrl.resource') #{__('Create a new resource')}
           h4.modal-title(ng-if='ctrl.resource') #{__('Update resource')}
         .modal-body.esn-resource-create
-        
           .row
             .col-xs-12
-              esn-form-group(label=__('Name'))
-                input.form-control(type="text", ng-model="ctrl.resource.name", name="resourceName", required)
+              .form-group
+                  .fg-float
+                    label.fg-label #{__('Name')} *
+                    input.form-control(type="text", ng-model="ctrl.resource.name", name="resourceName", required)
           .row
             .col-xs-12
-              esn-form-group(label=__('Description'))
-                textarea.form-control(rows="2", ng-model="ctrl.resource.description", name="resourceDescription", required)
+              .form-group
+                .fg-float
+                  label.fg-label #{__('Description')} *
+                  textarea.form-control(rows="2", ng-model="ctrl.resource.description", name="resourceDescription", required)
           .row
             .col-xs-12
               .form-group.resource-select-fields
                 .fg-float
                   label.fg-label #{__('Type')}
                   .select
-                    select.form-control(ng-model='ctrl.selectedType', required)
+                    select.form-control(ng-model='ctrl.selectedType', ng-disabled='!!ctrl.type', required)
                       option(ng-repeat="type in ::ctrl.resourceTypes" value="{{type}}" ng-selected="ctrl.isSelected(type)") {{ type | esnI18n}}
                 .fg-float
                   label.fg-label #{__('Icon')}

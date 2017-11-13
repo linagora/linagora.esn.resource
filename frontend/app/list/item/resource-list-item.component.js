@@ -7,6 +7,7 @@
         resource: '<'
       },
       controllerAs: 'ctrl',
+      controller: 'esnResourceListItemController',
       templateUrl: '/linagora.esn.resource/app/list/item/resource-list-item.html'
     });
 })(angular);

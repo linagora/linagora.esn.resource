@@ -1,0 +1,45 @@
+.modal.full-screen(tabindex="-1", role="dialog")
+  .modal-dialog
+    form(name="form")
+      .modal-content
+        .modal-header
+          button.close(type='button', data-dismiss="modal", aria-label="Close", ng-click="$hide()")
+            span(aria-hidden="true") &times;
+          h4.modal-title(ng-if='!ctrl.resource') #{__('Create a new resource')}
+          h4.modal-title(ng-if='ctrl.resource') #{__('Update resource')}
+        .modal-body.esn-resource-create
+          .row
+            .col-xs-12
+              .form-group
+                  .fg-float
+                    label.fg-label #{__('Name')} *
+                    input.form-control(type="text", ng-model="ctrl.resource.name", name="resourceName", required)
+          .row
+            .col-xs-12
+              .form-group
+                .fg-float
+                  label.fg-label #{__('Description')} *
+                  textarea.form-control(rows="2", ng-model="ctrl.resource.description", name="resourceDescription", required)
+          .row
+            .col-xs-12
+              .form-group.resource-select-fields
+                .fg-float
+                  label.fg-label #{__('Type')}
+                  .select
+                    select.form-control(ng-model='ctrl.selectedType', ng-disabled='!!ctrl.type', required)
+                      option(ng-repeat="type in ::ctrl.resourceTypes" value="{{type}}" ng-selected="ctrl.isSelected(type)") {{ type | esnI18n}}
+                .fg-float
+                  label.fg-label #{__('Icon')}
+                  esn-resource-icon-picker(icon="ctrl.resource.icon")
+          .row
+            .col-xs-12 
+              .form-group.resource-admin-block
+                .fg-float
+                  label.fg-label #{__('Administrators')}
+                  .resource-add-me-as-admin
+                    input(type="checkbox", ng-model="ctrl.beAdmin")
+                    small.admin-checkbox #{__('Add me as administrator')}
+                  users-autocomplete-input(mutable-users="ctrl.resourceAdministrators", add-from-autocomplete-only="true")
+        .modal-footer
+          button.btn.btn-default(type="button", ng-click="$hide()") #{__('Cancel')}
+          button.btn.btn-primary(type="button", ng-disabled="form.$invalid", ng-click="ctrl.submit(); $hide()") #{__('Create')}

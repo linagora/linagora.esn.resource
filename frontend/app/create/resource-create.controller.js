@@ -7,6 +7,7 @@
   function ESNResourceCreateController($modal, $scope, $state, _, esnResourceAPIClient, asyncAction, session, ESN_RESOURCE) {
     var self = this;
 
+    self.resource = {};
     self.beAdmin = true;
     self.submit = submit;
     self.resourceAdministrators = [];

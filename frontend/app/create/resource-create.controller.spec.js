@@ -61,6 +61,7 @@ describe('The ESNResourceCreateController controller', function() {
       esnResourceAPIClient.create = sinon.stub().returns($q.when());
       var goSpy = sinon.spy($state, 'reload');
 
+      ctrl.resource = resource;
       ctrl.beAdmin = false;
       ctrl.submit();
       asyncAction.firstCall.args[1]();
@@ -86,6 +87,7 @@ describe('The ESNResourceCreateController controller', function() {
         }
       ];
 
+      ctrl.resource = resource;
       ctrl.beAdmin = false;
       ctrl.submit();
       asyncAction.firstCall.args[1]();
@@ -110,6 +112,7 @@ describe('The ESNResourceCreateController controller', function() {
       esnResourceAPIClient.create = sinon.stub().returns($q.when());
       var goSpy = sinon.spy($state, 'reload');
 
+      ctrl.resource = resource;
       ctrl.beAdmin = true;
       ctrl.submit();
       asyncAction.firstCall.args[1]();
@@ -134,6 +137,7 @@ describe('The ESNResourceCreateController controller', function() {
       esnResourceAPIClient.create = sinon.stub().returns($q.when());
       var goSpy = sinon.spy($state, 'reload');
 
+      ctrl.resource = resource;
       ctrl.beAdmin = false;
       ctrl.submit();
       asyncAction.firstCall.args[1]();

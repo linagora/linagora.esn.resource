@@ -5,8 +5,8 @@
         .modal-header
           button.close(type='button', data-dismiss="modal", aria-label="Close", ng-click="$hide()")
             span(aria-hidden="true") &times;
-          h4.modal-title(ng-if='!ctrl.resource') #{__('Create a new resource')}
-          h4.modal-title(ng-if='ctrl.resource') #{__('Update resource')}
+          h4.modal-title(ng-if='!ctrl.resource._id') #{__('Create a new resource')}
+          h4.modal-title(ng-if='ctrl.resource._id') #{__('Update resource')}
         .modal-body.esn-resource-create
           .row
             .col-xs-12

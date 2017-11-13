@@ -1,0 +1,8 @@
+.administrator-container.clickable(ng-if="ctrl.administratorInfo", ui-sref="profile({user_id: ctrl.administrator.id})")
+  .pull-left.p-r-15
+    esn-avatar(user-id="::ctrl.administrator.id")
+  .media-body
+    .lv-title
+      h4.media-heading {{::ctrl.administratorInfo.firstname}} {{::ctrl.administratorInfo.lastname}}
+      span
+        a(ng-href='mailto:{{::ctrl.administratorInfo.emails[0]}}', op-inbox-compose) {{::ctrl.administratorInfo.emails[0]}}

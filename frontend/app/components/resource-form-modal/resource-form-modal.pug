@@ -24,7 +24,7 @@
             .col-xs-12
               .form-group.resource-select-fields
                 .fg-float
-                  label.fg-label #{__('Type')} {{ctrl.type}}
+                  label.fg-label #{__('Type')}
                   .select
                     select.form-control(ng-model='ctrl.selectedType', ng-disabled='!!ctrl.type', required)
                       option(ng-repeat="type in ::ctrl.resourceTypes" value="{{type}}" ng-selected="ctrl.isSelected(type)") {{ type | esnI18n}}

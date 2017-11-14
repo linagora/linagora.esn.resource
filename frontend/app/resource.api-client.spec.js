@@ -30,6 +30,23 @@ describe('The esnResourceAPIClient service', function() {
     });
   });
 
+  describe('The update function', function() {
+    it('should call the REST API', function(done) {
+      var resource = {
+        _id: 'id',
+        name: 'The resource name',
+        description: 'The resource description',
+        type: 'calendar'
+      };
+
+      $httpBackend.expectPUT('/linagora.esn.resource/api/resources/id', resource).respond(201, {});
+      esnResourceAPIClient.update(resource).then(function() {
+        done();
+      }, done);
+      $httpBackend.flush();
+    });
+  });
+
   describe('The list function', function() {
     it('should call the REST API with right parameters', function(done) {
       var data = [1, 2, 3];

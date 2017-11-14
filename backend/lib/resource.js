@@ -68,9 +68,7 @@ module.exports = dependencies => {
       return Promise.reject(new Error('Resource is required'));
     }
 
-    resource.timestamps += {
-      updatedAt: Date.now()
-    };
+    resource.timestamps.updatedAt = Date.now();
 
     return ResourceModel.findOneAndUpdate({_id: id}, resource, { new: true }).exec()
       .then(updated => {

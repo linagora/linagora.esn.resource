@@ -13,18 +13,18 @@
               .form-group
                   .fg-float
                     label.fg-label #{__('Name')} *
-                    input.form-control(type="text", ng-model="ctrl.resource.name", name="resourceName", required)
+                    input.form-control(type="text", ng-model="ctrl.resource.name", required)
           .row
             .col-xs-12
               .form-group
                 .fg-float
                   label.fg-label #{__('Description')} *
-                  textarea.form-control(rows="2", ng-model="ctrl.resource.description", name="resourceDescription", required)
+                  textarea.form-control(rows="2", ng-model="ctrl.resource.description", required)
           .row
             .col-xs-12
               .form-group.resource-select-fields
                 .fg-float
-                  label.fg-label #{__('Type')}
+                  label.fg-label #{__('Type')} {{ctrl.type}}
                   .select
                     select.form-control(ng-model='ctrl.selectedType', ng-disabled='!!ctrl.type', required)
                       option(ng-repeat="type in ::ctrl.resourceTypes" value="{{type}}" ng-selected="ctrl.isSelected(type)") {{ type | esnI18n}}
@@ -39,7 +39,11 @@
                   .resource-add-me-as-admin
                     input(type="checkbox", ng-model="ctrl.beAdmin")
                     small.admin-checkbox #{__('Add me as administrator')}
-                  users-autocomplete-input(mutable-users="ctrl.resourceAdministrators", add-from-autocomplete-only="true")
+                  users-autocomplete-input(mutable-users="ctrl.resourceAdministrators", add-from-autocomplete-only="true", on-adding-user="ctrl.onAddingAdmin", on-user-added="ctrl.onAddedAdmin")
+          .row
+            .col-xs-12
+              .form-group.resource-admin-block
+                  esn-resource-administrator-list(ng-if="ctrl.resource.administrators", administrators="ctrl.resource.administrators", on-remove="ctrl.onAdminRemove")
         .modal-footer
           button.btn.btn-default(type="button", ng-click="$hide()") #{__('Cancel')}
-          button.btn.btn-primary(type="button", ng-disabled="form.$invalid", ng-click="ctrl.submit(); $hide()") #{__('Create')}
+          button.btn.btn-primary(type="button", ng-disabled="form.$invalid", ng-click="ctrl.submit(ctrl.resource); $hide()") #{__('Save')}

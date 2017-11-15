@@ -5,6 +5,12 @@ body {
         overflow: initial;
         padding-top: 20px;
 
+        .form-control {
+          &.ng-untouched{
+            border-bottom: 1px solid @inputBorderColor;
+          }
+        }
+
         .fg-label {
           font-weight: 400;
           position: relative;

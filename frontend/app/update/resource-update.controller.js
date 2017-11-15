@@ -2,21 +2,22 @@
   'use strict';
 
   angular.module('linagora.esn.resource')
-    .controller('ESNResourceCreateModalController', ESNResourceCreateModalController);
+    .controller('ESNResourceUpdateModalController', ESNResourceUpdateModalController);
 
-  function ESNResourceCreateModalController($modal) {
+  function ESNResourceUpdateModalController($modal) {
     var self = this;
 
-    self.openResourceCreateModal = openResourceCreateModal;
+    self.openResourceUpdateModal = openResourceUpdateModal;
 
-    function openResourceCreateModal() {
+    function openResourceUpdateModal() {
       $modal({
         templateUrl: '/linagora.esn.resource/app/components/resource-form-modal/resource-form-modal.html',
-        controller: 'ESNResourceFormCreateController',
+        controller: 'ESNResourceFormUpdateController',
         backdrop: 'static',
         placement: 'center',
         controllerAs: 'ctrl',
         locals: {
+          resource: self.resource,
           type: self.type
         }
       });

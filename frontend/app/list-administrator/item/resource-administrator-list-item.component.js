@@ -4,7 +4,8 @@
   angular.module('linagora.esn.resource')
     .component('esnResourceAdministratorListItem', {
       bindings: {
-        administrator: '<'
+        administrator: '=',
+        onRemove: '='
       },
       controllerAs: 'ctrl',
       templateUrl: '/linagora.esn.resource/app/list-administrator/item/resource-administrator-list-item.html'

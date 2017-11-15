@@ -4,8 +4,8 @@
 
 var expect = chai.expect;
 
-describe('The ESNResourceCreateController controller', function() {
-  var $q, $state, $controller, $rootScope, $scope, context, resource, esnResourceAPIClient, sessionMock, asyncAction, resourceType;
+describe('The ESNResourceFormCreateController controller', function() {
+  var $q, $state, $controller, $rootScope, $scope, context, resource, esnResourceAPIClient, typeMock, sessionMock, asyncAction, resourceType;
 
   beforeEach(function() {
     module('jadeTemplates');
@@ -30,10 +30,13 @@ describe('The ESNResourceCreateController controller', function() {
       }
     };
 
+    typeMock = undefined;
+
     module(function($provide) {
       $provide.value('asyncAction', asyncAction);
       $provide.value('esnResourceAPIClient', esnResourceAPIClient);
       $provide.value('session', sessionMock);
+      $provide.value('type', typeMock);
     });
   });
 
@@ -47,7 +50,7 @@ describe('The ESNResourceCreateController controller', function() {
   }));
 
   function initController() {
-    return $controller('ESNResourceCreateController', {$scope: $scope}, context);
+    return $controller('ESNResourceFormCreateController', {$scope: $scope}, context);
   }
 
   describe('The submit function', function() {

@@ -632,7 +632,8 @@ describe('The resource API', function() {
       const resourceUpdated = {
         name: 'resource updated',
         description: 'description updated',
-        type: resource.type
+        type: resource.type,
+        timestamps: {}
       };
 
       resource.creator = user._id;

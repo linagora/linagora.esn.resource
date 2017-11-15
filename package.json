@@ -63,6 +63,7 @@
   "dependencies": {
     "awesome-module": "1.1.0",
     "bower": "1.7.9",
+    "express": "4.14.0",
     "glob-all": "3.1.0",
     "lodash": "4.15.0",
     "q": "1.4.1"

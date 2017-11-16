@@ -24,7 +24,7 @@
             return $q.when([]);
           });
       },
-      templateUrl: '/linagora.esn.resource/app/resource-attendee-template.html'
+      templateUrl: '/linagora.esn.resource/app/attendee-provider/attendee-template.html'
     };
   }
 })(angular);

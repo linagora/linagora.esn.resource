@@ -3,7 +3,7 @@ const sinon = require('sinon');
 const mockery = require('mockery');
 
 describe('The Webserver resource controller', function() {
-  let query, limit, offset, sortKey, sortOrder, domainId, req, header;
+  let query, limit, offset, sortKey, sortOrder, domainId, req, header, deleted;
 
   beforeEach(function() {
     query = 'Search me';
@@ -12,7 +12,8 @@ describe('The Webserver resource controller', function() {
     sortKey = 'name';
     sortOrder = 'desc';
     domainId = 1;
-    req = { query: { query, limit, offset, sortKey, sortOrder, domainId } };
+    deleted = false;
+    req = { query: { query, limit, offset, sortKey, sortOrder, domainId, deleted } };
     header = sinon.spy();
 
     this.getModule = () => require(this.moduleHelpers.backendPath + '/webserver/api/resource/controller')(this.moduleHelpers.dependencies);
@@ -29,7 +30,15 @@ describe('The Webserver resource controller', function() {
         this.getModule().list(req, {
           header,
           status: code => {
-            expect(search).to.have.been.calledWith({ search: query, limit, offset, sortKey, sortOrder, domainId });
+            expect(search).to.have.been.calledWith({
+              search: query,
+              limit,
+              offset,
+              sortKey,
+              sortOrder,
+              domainId,
+              deleted
+            });
             expect(code).to.equal(200);
 
             return { json: () => done() };

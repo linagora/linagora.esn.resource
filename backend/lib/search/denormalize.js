@@ -13,7 +13,8 @@ function denormalize(resource) {
     domain: resource.domain,
     creator: resource.creator,
     creation: resource.timestamps.creation,
-    updatedAt: resource.timestamps.updatedAt || resource.timestamps.creation
+    updatedAt: resource.timestamps.updatedAt || resource.timestamps.creation,
+    deleted: resource.deleted
   };
 }
 

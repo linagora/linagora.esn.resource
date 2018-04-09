@@ -314,7 +314,7 @@ describe('The resource API', function() {
       });
     });
 
-    it('should 403 when user is not the resource creator', function(done) {
+    it('should 403 when user is not the domain manager', function(done) {
       const self = this;
 
       resource.creator = new ObjectId();
@@ -325,7 +325,7 @@ describe('The resource API', function() {
         .catch(done);
 
       function test(created) {
-        self.helpers.api.loginAsUser(self.app, user.emails[0], password, (err, requestAsMember) => {
+        self.helpers.api.loginAsUser(self.app, user2.emails[0], password, (err, requestAsMember) => {
           if (err) {
             return done(err);
           }
@@ -557,6 +557,25 @@ describe('The resource API', function() {
           });
         });
     });
+
+    it('should 403 when user is not the domain manager', function(done) {
+      const self = this;
+
+      resource.creator = new ObjectId();
+      resource.domain = domain._id;
+
+      self.helpers.api.loginAsUser(self.app, user2.emails[0], password, (err, requestAsMember) => {
+        if (err) {
+          return done(err);
+        }
+
+        requestAsMember(request(self.app)
+        .post('/api/resources'))
+        .send(resource)
+        .expect(403)
+        .end(done);
+      });
+    });
   });
 
   describe('PUT /:id', function() {
@@ -579,7 +598,7 @@ describe('The resource API', function() {
       });
     });
 
-    it('should 403 when a user not creator try to update resource`', function(done) {
+    it('should 403 when a user not domain manager try to update resource`', function(done) {
       const self = this;
       const resourceUpdated = {
         name: 'resource updated',
@@ -597,7 +616,7 @@ describe('The resource API', function() {
         .catch(done);
 
       function test(created) {
-        self.helpers.api.loginAsUser(self.app, user.emails[0], password, (err, requestAsMember) => {
+        self.helpers.api.loginAsUser(self.app, user2.emails[0], password, (err, requestAsMember) => {
           if (err) {
             return done(err);
           }

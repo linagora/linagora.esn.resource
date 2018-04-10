@@ -2,8 +2,7 @@
 
 const DEFAULT_PORTS = {
   express: 23455,
-  mongo: 23456,
-  redis: 23457
+  mongo: 23456
 };
 const tmp = 'tmp';
 const host = process.env.HOSTNAME || process.env.DOCKER_HOST || 'localhost';
@@ -19,14 +18,6 @@ module.exports = {
 
   express: {
     port: process.env.PORT_EXPRESS || DEFAULT_PORTS.express
-  },
-
-  redis: {
-    cmd: process.env.CMD_REDIS || 'redis-server',
-    port: process.env.PORT_REDIS || DEFAULT_PORTS.redis,
-    conf_file: '',
-    log_path: '',
-    pwd: ''
   },
 
   mongodb: {

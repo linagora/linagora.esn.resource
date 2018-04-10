@@ -53,12 +53,6 @@ class GruntfileUtils {
     const servers = this.servers;
     const commandObject = {};
 
-    commandObject.redis = util.format('%s --port %s %s %s',
-      servers.redis.cmd,
-      (servers.redis.port ? servers.redis.port : '23457'),
-      (servers.redis.pwd ? '--requirepass' + servers.redis.pwd : ''),
-      (servers.redis.conf_file ? servers.redis.conf_file : ''));
-
     commandObject.mongo = function(repl) {
       const replset = repl ?
         util.format('--replSet \'%s\' --smallfiles --oplogSize 128', servers.mongodb.replicat_set_name) :

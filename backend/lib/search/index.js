@@ -32,6 +32,11 @@ module.exports = dependencies => {
     const sortOrder = query.sortOrder || SEARCH.DEFAULT_SORT_ORDER;
     const filters = [];
     const sort = {};
+    const mustNotSearchDeletedResource = {
+      match: {
+        deleted: true
+      }
+    };
 
     sort[sortKey] = {
       order: sortOrder
@@ -54,6 +59,15 @@ module.exports = dependencies => {
       });
     }
 
+    if (!query.deleted) {
+      elasticsearchQuery.query.bool.must_not = elasticsearchQuery.query.bool.must_not ?
+        Object.assign(
+          elasticsearchQuery.query.bool.must_not,
+          mustNotSearchDeletedResource
+        ) :
+        mustNotSearchDeletedResource;
+    }
+
     if (filters.length) {
       elasticsearchQuery.query.bool.filter = {
         and: filters
@@ -62,7 +76,7 @@ module.exports = dependencies => {
 
     logger.debug('Searching resources with options', {
       domainId: query.domainId,
-      esQuery,
+      query: elasticsearchQuery.query,
       offset,
       limit,
       sort

@@ -48,7 +48,13 @@ module.exports = dependencies => {
   }
 
   function getList(options = {}) {
-    const query = {};
+    const deletedFieldValuesToQuery = options.deleted ? [true, false, null] : [false, null];
+
+    const query = {
+      deleted: {
+        $in: deletedFieldValuesToQuery
+      }
+    };
 
     if (options.type) {
       query.type = options.type;

@@ -83,7 +83,8 @@ module.exports = dependencies => {
       offset: req.query.offset,
       sortKey: req.query.sortKey,
       sortOrder: req.query.sortOrder,
-      domainId: req.query.domainId
+      domainId: req.query.domainId,
+      deleted: req.query.deleted
     };
 
     searchLib.search(query)

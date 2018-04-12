@@ -69,7 +69,7 @@ module.exports = dependencies => {
       }
 
       logger.debug(`Resource ${resource._id} has been removed`);
-      res.status(204).send();
+      res.status(200).json(result);
     }).catch(err => {
       logger.error('Error while removing resource', err);
       res.status(500).json({error: {status: 500, message: 'Server Error', details: 'Error while removing the resource'}});

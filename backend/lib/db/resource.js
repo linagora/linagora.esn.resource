@@ -7,6 +7,7 @@ module.exports = dependencies => {
     description: {type: String, required: true},
     // "admin#directory#resources#calendars#CalendarResource"
     type: {type: String, required: true},
+    deleted: {type: Boolean, default: false},
     domain: {type: ObjectId, ref: 'Domain', required: true},
     creator: {type: ObjectId, ref: 'User', required: true},
     icon: {type: String},

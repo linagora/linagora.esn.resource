@@ -337,19 +337,27 @@ describe('The resource API', function() {
       }
     });
 
-    it('should 204 and publish it locally on `resource:deleted`', function(done) {
+    it('should 200 and publish it locally on `resource:updated`', function(done) {
       const self = this;
 
       resource.creator = user._id;
       resource.domain = domain._id;
       publishSpy = sinon.spy();
-      pubsubLocal.topic(RESOURCE.DELETED).publish = publishSpy;
+      pubsubLocal.topic(RESOURCE.UPDATED).publish = publishSpy;
 
       this.helpers.modules.current.lib.lib.resource.create(resource)
         .then(test)
         .catch(done);
 
       function test(created) {
+        var expected = {
+          _id: created._id,
+          name: created.name,
+          description: created.description,
+          type: created.type,
+          deleted: true
+        };
+
         self.helpers.api.loginAsUser(self.app, user.emails[0], password, (err, requestAsMember) => {
           if (err) {
             return done(err);
@@ -357,23 +365,15 @@ describe('The resource API', function() {
 
           const req = requestAsMember(request(self.app).delete(`/api/resources/${created._id}`));
 
-          req.expect(204);
+          req.expect(200);
           req.end(err => {
             if (err) {
               return done(err);
             }
 
             return self.helpers.modules.current.lib.lib.resource.get(created._id).then(result => {
-              expect(result).to.be.null;
-              expect(publishSpy).to.have.been.calledWith(sinon.match({
-                _id: created._id,
-                creator: sinon.match.any,
-                domain: sinon.match.any,
-                name: created.name,
-                description: created.description,
-                type: created.type,
-                timestamps: {creation: sinon.match.any}
-              }));
+              expect(result).to.shallowDeepEqual(expected);
+              expect(publishSpy).to.have.been.calledWith(sinon.match(expected));
 
               done();
             });

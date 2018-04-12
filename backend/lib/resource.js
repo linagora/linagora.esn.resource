@@ -32,15 +32,22 @@ module.exports = dependencies => {
       return Promise.reject(new Error('Resource id is required'));
     }
 
-    return ResourceModel.findByIdAndRemove(resourceId).exec().then(removed => {
-      if (!removed) {
-        return Promise.reject(new Error('Resource does not exist and can not be removed'));
-      }
+    return ResourceModel
+      .findOneAndUpdate(
+        { _id: resourceId },
+        { $set: { deleted: true } },
+        { new: true }
+      )
+      .exec()
+      .then(resource => {
+        if (!resource) {
+          return Promise.reject(new Error('Resource does not exist and can not be removed'));
+        }
 
-      pubsub.local.topic(RESOURCE.DELETED).publish(removed);
+        pubsub.local.topic(RESOURCE.UPDATED).publish(resource);
 
-      return removed;
-    });
+        return resource;
+      });
   }
 
   function get(id) {

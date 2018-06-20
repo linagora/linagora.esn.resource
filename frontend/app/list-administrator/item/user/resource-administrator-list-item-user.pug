@@ -1,4 +1,4 @@
-.administrator-container.clickable(ng-if="ctrl.administratorInfo", ui-sref="profile({user_id: ctrl.administrator.id})", ng-click='$hide();')
+.administrator-container(ng-if="ctrl.administratorInfo")
   .pull-left.p-r-15
     esn-avatar(user-id="::ctrl.administrator.id")
   .media-body

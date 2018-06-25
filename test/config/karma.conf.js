@@ -27,6 +27,7 @@ module.exports = function(config) {
       'node_modules/linagora-rse/frontend/js/modules/**/*.js',
       'node_modules/linagora-rse/frontend/js/*.js',
       'node_modules/linagora-rse/test/fixtures/**/*.js',
+      'node_modules/linagora-rse/frontend/views/modules/**/*.pug',
       { pattern: 'node_modules/linagora-rse/frontend/js/modules/i18n/i18n.config.js', watched: false, included: false, served: true },
       { pattern: 'frontend/images/*.*', watched: false, included: false, served: true },
       { pattern: 'frontend/components/mdi/fonts/*.*', watched: false, included: false, served: true },

@@ -96,6 +96,7 @@ module.exports = dependencies => {
       .then(searchResult => searchResult.list.map(resource => resourceLib.get(resource._id)))
       .then(promises => Q.allSettled(promises))
       .then(resolvedResources => resolvedResources.filter(_ => _.state === 'fulfilled').map(_ => _.value))
+      .then(resources => resources.filter(Boolean))
       .then(resources => res.status(200).json(resources || []))
       .catch(err => {
         logger.error('Error while searching resources', err);

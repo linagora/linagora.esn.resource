@@ -6,6 +6,7 @@
     .constant('ESN_RESOURCE', {
       TYPES: ['admin', 'directory', 'resource', 'calendar'],
       ICONS: {
+        default: 'mdi-home',
         'guitar-acoustic': 'mdi-guitar-acoustic',
         home: 'mdi-home',
         laptop: 'mdi-laptop',

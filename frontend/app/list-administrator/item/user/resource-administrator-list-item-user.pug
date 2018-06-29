@@ -7,4 +7,4 @@
       span
         a(ng-href='mailto:{{::ctrl.administratorInfo.emails[0]}}', op-inbox-compose) {{::ctrl.administratorInfo.emails[0]}}
 .actions(ng-if='ctrl.onRemove')
-  i.mdi.mdi-close(ng-click="ctrl.onRemove(ctrl.administrator._id)")
+  i.mdi.mdi-close(ng-click="ctrl.onRemove(ctrl.administrator.id)")

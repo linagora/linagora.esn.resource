@@ -32,14 +32,20 @@
                   label.fg-label #{__('Icon')}
                   esn-resource-icon-picker(icon="ctrl.resource.icon")
           .row
-            .col-xs-12 
+            .col-xs-12
               .form-group.resource-admin-block
                 .fg-float
                   label.fg-label #{__('Administrators')}
                   .resource-add-me-as-admin
                     input(type="checkbox", ng-model="ctrl.beAdmin")
                     small.admin-checkbox #{__('Add me as administrator')}
-                  users-autocomplete-input(mutable-users="ctrl.resourceAdministrators", add-from-autocomplete-only="true", on-adding-user="ctrl.onAddingAdmin", on-user-added="ctrl.onAddedAdmin")
+                  users-autocomplete-input(
+                    mutable-users="ctrl.resourceAdministrators",
+                    ignored-users="ctrl.initialAdministrators",
+                    add-from-autocomplete-only="true",
+                    on-adding-user="ctrl.onAddingAdmin",
+                    on-user-added="ctrl.onAddedAdmin"
+                  )
           .row
             .col-xs-12
               .form-group.resource-admin-block

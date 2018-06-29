@@ -12,16 +12,35 @@
     self.beAdmin = false;
     self.submit = submit;
     self.resourceAdministrators = [];
+    self.initialAdministrators = setupAdministratorsAsUsers(angular.copy(self.resource.administrators));
     self.resourceTypes = ESN_RESOURCE.TYPES;
     self.defaultResourceType = 'resource';
     self.selectedType = self.resource.type || 'resource';
     self.isSelected = isSelected;
     self.onAdminRemove = onAdminRemove;
+    self.onAddingAdmin = onAddingAdmin;
+
+    function onAddingAdmin($tags) {
+      return !!$tags._id;
+    }
+
+    function setupAdministratorsAsUsers(administrators) {
+      return administrators.map(function(administrator) {
+        // administrator is a tuple {id, objectType}
+        // need to map to be able to filter from autocomplete which filters on _id
+        administrator._id = administrator.id;
+
+        return administrator;
+      });
+    }
 
     function onAdminRemove(id) {
       _.remove(self.resource.administrators, {
+        id: id
+      });
+      _.remove(self.initialAdministrators, {
         _id: id
-    });
+      });
     }
 
     function isSelected(type) {

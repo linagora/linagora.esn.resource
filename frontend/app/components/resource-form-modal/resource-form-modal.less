@@ -2,7 +2,7 @@ body {
   .modal.center {
     .modal-dialog {
       .esn-resource-create {
-        overflow: initial;
+        overflow: initial !important /* Overrides bootstrap one which scrolls */;
         padding-top: 20px;
 
         .form-control {
@@ -20,37 +20,37 @@ body {
           vertical-align: text-bottom;
           margin-left: 10px;
         }
-      
+
         .select {
           max-width: 100px;
-      
+
           select {
             padding-left: 5px;
             text-transform: capitalize;
           }
         }
-      
+
         .resource-select-fields, .resource-admin-block {
           .flex-space-between;
-          
+
           .fg-float {
             width: 100%;
           }
         }
-      
+
         .resource-select-fields {
           .icon-picker-container {
             width: 50px;
           }
         }
-       
+
         .resource-admin-block {
           .resource-add-me-as-admin {
             .flex-vertical-centered;
-      
+
             padding-top: 5px;
           }
-      
+
           .col-xs-12 {
             padding-left: 0;
           }

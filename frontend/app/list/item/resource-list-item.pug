@@ -1,10 +1,12 @@
 .resource-list-item(esn-modal-launcher="/linagora.esn.resource/app/display/resource-display.html")
-  .col-md-4.col-xs-6.lv-title
-    h5.ellipsis(title="{{::ctrl.resource.name}}") {{::ctrl.resource.name}}
+  .col-md-4.col-xs-6
+    .avatar-name
+      esn-resource-avatar(resource="ctrl.resource")
+      span.ellipsis(title="{{::ctrl.resource.name}}") {{::ctrl.resource.name}}
   .col-md-5.col-xs-5.ellipsis
     span(title="{{::ctrl.resource.description}}")
       | {{::ctrl.resource.description}}
-  .col-md-3.hidden-xs.lv-title
+  .col-md-3.hidden-xs
     span {{::ctrl.resource.administrators.length}} #{__('administrator(s)')}
 .lv-actions.actions
   a(href="", data-toggle="dropdown", aria-expanded="false")

@@ -9,7 +9,6 @@ const testConfig = require('../config/servers-conf');
 const basePath = path.resolve(__dirname + '/../../node_modules/linagora-rse');
 const tmpPath = path.resolve(__dirname + '/../..', testConfig.tmp);
 const backendPath = path.normalize(__dirname + '/../../backend');
-const host = testConfig.host;
 const MODULE_NAME = 'linagora.esn.resource';
 let rse;
 
@@ -27,9 +26,9 @@ before(function(done) {
     tmp: tmpPath,
     backendPath: backendPath,
     fixtures: path.resolve(basePath, 'test/midway-backend/fixtures'),
-    mongoUrl: 'mongodb://' + host + ':' + testConfig.mongodb.port + '/' + testConfig.mongodb.dbname,
+    mongoUrl: testConfig.mongodb.connectionString,
     writeDBConfigFile() {
-      fs.writeFileSync(tmpPath + '/db.json', JSON.stringify({connectionString: 'mongodb://' + host + ':' + testConfig.mongodb.port + '/' + testConfig.mongodb.dbname, connectionOptions: {auto_reconnect: false}}));
+      fs.writeFileSync(tmpPath + '/db.json', JSON.stringify({connectionString: testConfig.mongodb.connectionString, connectionOptions: {auto_reconnect: false}}));
     },
     removeDBConfigFile() {
       fs.unlinkSync(tmpPath + '/db.json');

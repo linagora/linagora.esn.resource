@@ -37,8 +37,10 @@
                 .fg-float
                   label.fg-label #{__('Administrators')}
                   .resource-add-me-as-admin
-                    input(type="checkbox", ng-model="ctrl.beAdmin")
-                    small.admin-checkbox #{__('Add me as administrator')}
+                    label.checkbox.checkbox-inline
+                      input(type="checkbox", ng-model="ctrl.beAdmin")
+                      i.input-helper
+                        small.admin-checkbox #{__('Add me as administrator')}
                   users-autocomplete-input(
                     mutable-users="ctrl.resourceAdministrators",
                     ignored-users="ctrl.initialAdministrators",

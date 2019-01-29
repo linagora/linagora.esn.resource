@@ -3,6 +3,7 @@ module.exports = dependencies => {
   const administrator = require('./administrator')(dependencies);
   const resource = require('./resource')(dependencies);
   const search = require('./search')(dependencies);
+  const people = require('./people')(dependencies);
 
   return {
     administrator,
@@ -10,6 +11,7 @@ module.exports = dependencies => {
       ResourceModel
     },
     resource,
+    people,
     search
   };
 };

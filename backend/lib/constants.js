@@ -1,4 +1,5 @@
 module.exports = {
+  OBJECT_TYPE: 'resource',
   EVENTS: {
   },
   RESOURCE: {

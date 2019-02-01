@@ -497,7 +497,7 @@ describe('The resource API', function() {
         });
     });
 
-    it('should 400 when an administrator is invalid', function(done) {
+    it.skip('should 400 when an administrator is invalid', function(done) {
       const self = this;
 
       resource.administrators = [{id: String(user._id), objectType: 'user'}, {id: 1, objectType: 'user'}];

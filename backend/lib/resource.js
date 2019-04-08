@@ -9,6 +9,7 @@ module.exports = dependencies => {
     create,
     get,
     getList,
+    listByCursor,
     update,
     remove
   };
@@ -74,6 +75,10 @@ module.exports = dependencies => {
       .populate('domain')
       .sort({ 'timestamps.creation': -1 })
       .exec();
+  }
+
+  function listByCursor() {
+    return ResourceModel.find().cursor();
   }
 
   function update(id, resource) {

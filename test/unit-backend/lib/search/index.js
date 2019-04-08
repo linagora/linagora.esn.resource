@@ -22,6 +22,7 @@ describe('The search lib', function() {
     pubsubListen = sinon.spy();
 
     mockery.registerMock('./pubsub', _.constant({listen: pubsubListen}));
+    mockery.registerMock('./reindex', () => {});
   });
 
   beforeEach(function() {
@@ -74,7 +75,9 @@ describe('The search lib', function() {
   describe('The listen function', function() {
     it('should register listeners', function() {
       const register = sinon.spy();
+      const reindexRegister = sinon.spy();
 
+      mockery.registerMock('./reindex', () => ({ register: reindexRegister }));
       mockery.registerMock('./searchHandler', _.constant({register: register}));
 
       const module = require('../../../../backend/lib/search')(this.moduleHelpers.dependencies);
@@ -82,6 +85,7 @@ describe('The search lib', function() {
       module.listen();
 
       expect(register).to.have.been.calledOnce;
+      expect(reindexRegister).to.have.been.calledOnce;
     });
   });
 });

@@ -359,24 +359,20 @@ describe('The resource API', function() {
         };
 
         self.helpers.api.loginAsUser(self.app, user.emails[0], password, (err, requestAsMember) => {
-          if (err) {
-            return done(err);
-          }
+          if (err) return done(err);
 
           const req = requestAsMember(request(self.app).delete(`/api/resources/${created._id}`));
 
           req.expect(200);
           req.end(err => {
-            if (err) {
-              return done(err);
-            }
+            if (err) return done(err);
 
             return self.helpers.modules.current.lib.lib.resource.get(created._id).then(result => {
               expect(result).to.shallowDeepEqual(expected);
               expect(publishSpy).to.have.been.calledWith(sinon.match(expected));
 
               done();
-            });
+            }).catch(done);
           });
         });
       }

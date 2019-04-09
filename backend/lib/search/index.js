@@ -3,6 +3,7 @@ const { SEARCH } = require('../constants');
 module.exports = dependencies => {
   const elasticsearch = dependencies('elasticsearch');
   const searchHandler = require('./searchHandler')(dependencies);
+  const reindex = require('./reindex')(dependencies);
   const logger = dependencies('logger');
 
   return {
@@ -105,5 +106,7 @@ module.exports = dependencies => {
   function listen() {
     logger.info('Subscribing to event updates for indexing');
     searchHandler.register();
+    logger.info('Register resource reindexing mechanism in elasticsearch');
+    reindex.register();
   }
 };

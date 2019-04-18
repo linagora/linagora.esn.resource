@@ -11,9 +11,9 @@
           .row
             .col-xs-12
               .form-group
-                  .fg-float
-                    label.fg-label #{__('Name')} *
-                    input.form-control(type="text", ng-model="ctrl.resource.name", required)
+                .fg-float
+                  label.fg-label #{__('Name')} *
+                  input.form-control(type="text", ng-model="ctrl.resource.name", required)
           .row
             .col-xs-12
               .form-group
@@ -51,7 +51,7 @@
           .row
             .col-xs-12
               .form-group.resource-admin-block
-                  esn-resource-administrator-list(ng-if="ctrl.resource.administrators", administrators="ctrl.resource.administrators", on-remove="ctrl.onAdminRemove")
+                esn-resource-administrator-list(ng-if="ctrl.resource.administrators", administrators="ctrl.resource.administrators", on-remove="ctrl.onAdminRemove")
         .modal-footer
           button.btn.btn-default(type="button", ng-click="$hide()") #{__('Cancel')}
           button.btn.btn-primary(type="button", ng-disabled="form.$invalid", ng-click="ctrl.submit(ctrl.resource); $hide()") #{__('Save')}

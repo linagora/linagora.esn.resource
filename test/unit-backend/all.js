@@ -1,10 +1,7 @@
-'use strict';
-
 const mockery = require('mockery');
 const chai = require('chai');
 const path = require('path');
 const helpers = require('linagora-rse').test.helpers;
-const testConfig = require('../config/servers-conf.js');
 const backendPath = path.normalize(__dirname + '/../../backend');
 
 before(function() {
@@ -13,12 +10,10 @@ before(function() {
   chai.use(require('chai-as-promised'));
 
   const basePath = path.resolve(__dirname + '/../../node_modules/linagora-rse');
-  const tmpPath = path.resolve(__dirname + '/../..', testConfig.tmp);
 
   this.testEnv = {
     basePath: basePath,
     backendPath: backendPath,
-    tmp: tmpPath,
     fixtures: path.resolve(__dirname + '/fixtures'),
     initCore: function(callback) {
       const core = require(basePath + '/backend/core');

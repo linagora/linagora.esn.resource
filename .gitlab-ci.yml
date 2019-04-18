@@ -81,7 +81,7 @@ test-midway-backend:
   <<: *test-template-svc
   stage: tests
   script:
-    - grunt -v gitlab-test-midway-backend
+    - grunt -v test-midway-backend
 
 deploy_dev:
   stage: deploy_dev

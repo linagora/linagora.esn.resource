@@ -51,10 +51,7 @@ module.exports = new AwesomeModule(MODULE_NAME, {
     },
 
     start: function(dependencies, callback) {
-      this.lib.search.listen();
-      this.lib.people.init();
-
-      callback();
+      this.lib.start(callback);
     }
   }
 });

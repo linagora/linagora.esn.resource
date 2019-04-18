@@ -12,6 +12,14 @@ module.exports = dependencies => {
     },
     resource,
     people,
-    search
+    search,
+    start
   };
+
+  function start(callback) {
+    search.listen();
+    people.init();
+
+    callback();
+  }
 };

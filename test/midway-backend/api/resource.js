@@ -8,7 +8,6 @@ describe('The resource API', function() {
   let user, user2, resource, domain;
   let pubsubLocal, publishSpy;
   const password = 'secret';
-  const moduleName = 'linagora.esn.resource';
 
   beforeEach(function(done) {
     const self = this;
@@ -19,39 +18,20 @@ describe('The resource API', function() {
       type: 'calendar-resource'
     };
 
-    this.helpers.modules.initMidway(moduleName, function(err) {
-      if (err) {
-        return done(err);
-      }
+    self.helpers.api.applyDomainDeployment('linagora_IT', function(err, models) {
+      if (err) return done(err);
 
-      self.helpers.api.applyDomainDeployment('linagora_IT', function(err, models) {
-        if (err) {
-          return done(err);
-        }
+      user = models.users[0];
+      user2 = models.users[1];
+      domain = models.domain;
+      self.models = models;
 
-        user = models.users[0];
-        user2 = models.users[1];
-        domain = models.domain;
-        self.models = models;
-
-        done();
-      });
+      done();
     });
   });
 
   beforeEach(function() {
-    var expressApp = require('../../../backend/webserver/application')(this.helpers.modules.current.deps);
-
-    expressApp.use('/api', this.helpers.modules.current.lib.api);
-    this.app = this.helpers.modules.getWebServer(expressApp);
-  });
-
-  beforeEach(function() {
     pubsubLocal = pubsubLocal || this.helpers.requireBackend('core').pubsub.local;
-  });
-
-  afterEach(function(done) {
-    this.helpers.api.cleanDomainDeployment(this.models, done);
   });
 
   describe('GET /', function() {
@@ -90,10 +70,6 @@ describe('The resource API', function() {
 
         return self.helpers.modules.current.lib.lib.resource.create(resource);
       }
-    });
-
-    afterEach(function(done) {
-      this.helpers.modules.current.lib.lib.db.ResourceModel.remove({}).then(() => done(), done);
     });
 
     it('should 401 if not logged in', function(done) {
@@ -229,6 +205,37 @@ describe('The resource API', function() {
           });
         });
       }
+    });
+
+    describe('with search query', function() {
+      it('should return the matching resource of the query', function(done) {
+        const self = this;
+        const { lib } = self.helpers.modules.current.lib;
+        const resource = {
+          name: 'Foobar',
+          description: 'A description',
+          type: 'type',
+          domain: domain._id,
+          creator: new ObjectId()
+        };
+
+        lib.search.listen();
+        lib.resource.create(resource).then(resource => setTimeout(() => {
+          self.helpers.api.loginAsUser(self.app, user.emails[0], password, (err, requestAsMember) => {
+            if (err) return done(err);
+
+            requestAsMember(request(self.app).get(`/api/resources?query=${resource.name}`))
+              .expect(200)
+              .end((err, res) => {
+                if (err) return done(err);
+
+                expect(res.body).to.be.an('array').and.to.have.lengthOf(1);
+                expect(res.body[0]._id).to.equal(String(resource._id));
+                done();
+              });
+          });
+        }, self.testEnv.serversConfig.elasticsearch.interval_index));
+      });
     });
   });
 

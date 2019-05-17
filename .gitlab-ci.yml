@@ -12,7 +12,7 @@ stages:
   policy: pull
 
 .test-template: &test-template
-  image: node:8.15.0-stretch
+  image: node:10-stretch
   tags:
     - docker
   cache:
@@ -39,7 +39,7 @@ stages:
     ELASTICSEARCH_PORT: 9200
 
 prepare:
-  image: node:8
+  image: node:10-stretch
   stage: prepare
   tags:
     - docker

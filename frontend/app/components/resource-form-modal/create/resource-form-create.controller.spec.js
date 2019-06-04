@@ -13,7 +13,7 @@ describe('The ESNResourceFormCreateController controller', function() {
   });
 
   beforeEach(function() {
-    resource = {name: 'Foo', description: 'bar'};
+    resource = {name: 'Foo', description: 'bar', icon: 'Icon'};
     resourceType = 'resource';
     asyncAction = sinon.spy();
     esnResourceAPIClient = {};
@@ -71,6 +71,7 @@ describe('The ESNResourceFormCreateController controller', function() {
       $rootScope.$digest();
 
       expect(esnResourceAPIClient.create).to.have.been.calledWith({
+        icon: resource.icon,
         type: resourceType,
         name: resource.name,
         description: resource.description,
@@ -97,6 +98,7 @@ describe('The ESNResourceFormCreateController controller', function() {
       $rootScope.$digest();
 
       expect(esnResourceAPIClient.create).to.have.been.calledWith({
+        icon: resource.icon,
         type: resourceType,
         name: resource.name,
         description: resource.description,
@@ -122,6 +124,7 @@ describe('The ESNResourceFormCreateController controller', function() {
       $rootScope.$digest();
 
       expect(esnResourceAPIClient.create).to.have.been.calledWith({
+        icon: resource.icon,
         type: resourceType,
         name: resource.name,
         description: resource.description,
@@ -147,6 +150,7 @@ describe('The ESNResourceFormCreateController controller', function() {
       $rootScope.$digest();
 
       expect(esnResourceAPIClient.create).to.have.been.calledWith({
+        icon: resource.icon,
         type: resourceType,
         name: resource.name,
         description: resource.description,

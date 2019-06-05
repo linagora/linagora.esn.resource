@@ -27,6 +27,7 @@
         failure: 'Failed to create resource'
       }, function() {
         self.resource.type = self.selectedType;
+        self.resource.icon = self.resource.icon ? self.resource.icon : ESN_RESOURCE.DEFAULT_ICON;
         self.resource.administrators = _.map(self.resourceAdministrators, function(admin) {
           return {
             id: admin._id,

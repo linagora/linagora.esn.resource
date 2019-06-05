@@ -11,7 +11,7 @@
 
     function $onInit() {
       self.resourceName = self.resource.name || self.resource.displayName;
-      self.resourceIcon = ESN_RESOURCE.ICONS[self.resource.icon] || ESN_RESOURCE.ICONS.default;
+      self.resourceIcon = ESN_RESOURCE.ICONS[self.resource.icon];
     }
   }
 })(angular);

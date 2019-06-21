@@ -6,6 +6,7 @@ const sinon = require('sinon');
 
 describe('The resource API', function() {
   let user, user2, resource, domain;
+  let domain2, user1Domain2;
   let pubsubLocal, publishSpy;
   const password = 'secret';
 
@@ -26,7 +27,14 @@ describe('The resource API', function() {
       domain = models.domain;
       self.models = models;
 
-      done();
+      self.helpers.api.applyDomainDeployment('linagora_test_domain', (err, models2) => {
+        expect(err).to.not.exist;
+
+        domain2 = models2.domain;
+        user1Domain2 = models2.users[1];
+
+        done();
+      });
     });
   });
 
@@ -207,6 +215,54 @@ describe('The resource API', function() {
       }
     });
 
+    it('should return only resources inside request user domain', function(done) {
+      const self = this;
+      const resourceDomain1 = {
+        name: 'resource belongs to domain 1',
+        description: 'A description',
+        type: 'type',
+        domain: domain._id,
+        creator: new ObjectId()
+      };
+      const resourceDomain2 = {
+        name: 'resource belongs to domain 2',
+        description: 'A description',
+        type: 'type',
+        domain: domain2._id,
+        creator: new ObjectId()
+      };
+
+      self.helpers.modules.current.lib.lib.resource.create(resourceDomain1)
+        .then(() => {
+          self.helpers.modules.current.lib.lib.resource.create(resourceDomain2);
+        })
+        .then(test)
+        .catch(done);
+
+      function test() {
+        self.helpers.api.loginAsUser(self.app, user1Domain2.emails[0], password, (err, requestAsMember) => {
+          if (err) {
+            return done(err);
+          }
+
+          const req = requestAsMember(request(self.app).get(`/api/resources?offset=${offset}&limit=${limit}`));
+
+          req.expect(200);
+          req.end((err, res) => {
+            if (err) {
+              return done(err);
+            }
+
+            expect(res.body).to.be.an('array');
+            expect(res.body.length).to.equal(1);
+            expect(res.body[0].name).to.equal(resourceDomain2.name);
+            expect(res.body[0].domain._id.toString()).to.equal(resourceDomain2.domain.toString());
+            done();
+          });
+        });
+      }
+    });
+
     describe('with search query', function() {
       it('should return the matching resource of the query', function(done) {
         const self = this;
@@ -257,6 +313,39 @@ describe('The resource API', function() {
 
         req.expect(404, done);
       });
+    });
+
+    it('should return 403 if resource is not belong to request user domain', function(done) {
+      const self = this;
+      const resource = {
+        name: 'Foobar',
+        description: 'A description',
+        type: 'type',
+        domain: domain._id,
+        creator: new ObjectId()
+      };
+
+      self.helpers.modules.current.lib.lib.resource.create(resource).then(test).catch(done);
+
+      function test(createdResource) {
+        self.helpers.api.loginAsUser(self.app, user1Domain2.emails[0], password, (err, requestAsMember) => {
+          if (err) {
+            return done(err);
+          }
+
+          const req = requestAsMember(request(self.app).get(`/api/resources/${createdResource._id}`));
+
+          req.expect(403);
+          req.end((err, res) => {
+            if (err) {
+              return done(err);
+            }
+
+            expect(res.body.error.details).to.equal(`You do not have required permission on resource ${createdResource._id}`);
+            done();
+          });
+        });
+      }
     });
 
     it('should 200 with the resource', function(done) {

@@ -19,12 +19,14 @@ module.exports = dependencies => {
 
   router.get('/',
     authorizationMW.requiresAPILogin,
+    domainMW.loadSessionDomain,
     controller.list);
 
   router.get('/:id',
     authorizationMW.requiresAPILogin,
-    middleware.canReadResource,
+    domainMW.loadSessionDomain,
     middleware.load,
+    middleware.canReadResource,
     controller.get);
 
   router.delete('/:id',

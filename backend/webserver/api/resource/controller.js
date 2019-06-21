@@ -38,7 +38,12 @@ module.exports = dependencies => {
   }
 
   function getList(req, res) {
-    resourceLib.getList(req.query)
+    const options = {
+      ...req.query,
+      domainId: req.domain.id
+    };
+
+    resourceLib.getList(options)
       .then(resources => res.status(200).json(resources || []))
       .catch(err => {
         logger.error('Error while getting resources', err);

@@ -17,7 +17,17 @@ module.exports = dependencies => {
   }
 
   function canReadResource(req, res, next) {
-    next();
+    if (req.resource.domain._id.toString() === req.domain._id.toString()) {
+      return next();
+    }
+
+    return res.status(403).json({
+      error: {
+        code: 403,
+        message: 'Forbidden',
+        details: `You do not have required permission on resource ${req.resource.id}`
+      }
+    });
   }
 
   function canUpdateResource(req, res, next) {

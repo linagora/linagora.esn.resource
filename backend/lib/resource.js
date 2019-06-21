@@ -68,6 +68,10 @@ module.exports = dependencies => {
       query.type = options.type;
     }
 
+    if (options.domainId) {
+      query.domain = options.domainId;
+    }
+
     return ResourceModel
       .find(query)
       .skip(+options.offset || DEFAULT_OFFSET)

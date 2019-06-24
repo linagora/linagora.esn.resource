@@ -30,7 +30,12 @@ describe('The search lib', function() {
     offset = 10;
     limit = 30;
     hits = [1, 2, 3];
-    query = {offset, limit};
+    query = {
+      offset,
+      limit,
+      domainId: '456',
+      search: 'office'
+    };
 
     this.getModule = () => require(this.moduleHelpers.backendPath + '/lib/search/index')(this.moduleHelpers.dependencies);
   });
@@ -48,7 +53,24 @@ describe('The search lib', function() {
           type: 'resources',
           from: offset,
           size: limit,
-          body: sinon.match.object
+          body: {
+            query: {
+              bool: {
+                filter: { and: [{ term: { domain: '456' } }] },
+                must: {
+                  multi_match: {
+                    fields: ['name', 'description'],
+                    operator: 'and',
+                    query: 'office',
+                    tie_breaker: 0.5,
+                    type: 'cross_fields'
+                  }
+                },
+                must_not: { match: { deleted: true } }
+              }
+            },
+            sort: { 'name.sort': { order: 'desc' } }
+          }
         });
 
         expect(searchResult).to.deep.equals({ total_count: total, list: hits });

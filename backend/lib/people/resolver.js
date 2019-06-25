@@ -8,7 +8,8 @@ module.exports = dependencies => {
     const query = {
       search: term,
       limit: pagination.limit,
-      userId: String(context.user._id)
+      userId: String(context.user._id),
+      domainId: String(context.domain._id)
     };
 
     return searchLib.search(query)

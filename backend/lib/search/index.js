@@ -55,7 +55,7 @@ module.exports = dependencies => {
     if (query.domainId) {
       filters.push({
         term: {
-          domainId: query.domainId.toString()
+          domain: query.domainId.toString()
         }
       });
     }

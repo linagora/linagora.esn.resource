@@ -45,26 +45,27 @@ describe('GET /api/people/search with "resource" objectType', function() {
     const { lib } = self.helpers.modules.current.lib;
 
     Promise.all([lib.resource.create(resourceDomain1), lib.resource.create(resourceDomain2)])
-      .then(() => setTimeout(test, self.testEnv.serversConfig.elasticsearch.interval_index))
+      .then(resources => self.helpers.elasticsearch.checkDocumentsIndexed({
+        index: 'resources.idx',
+        type: 'resources',
+        ids: resources.map(resource => resource._id)
+      }, err => {
+        if (err) return done(err);
+
+        test();
+      }))
       .catch(done);
 
     function test() {
       self.helpers.api.loginAsUser(self.app, user1Domain2.emails[0], password, (err, requestAsMember) => {
-        if (err) {
-          return done(err);
-        }
+        if (err) return done(err);
 
         requestAsMember(request(self.app)
           .post('/api/people/search'))
-          .send({
-            objectType: ['resource'],
-            q: 'office'
-          })
+          .send({ objectType: ['resource'], q: 'office' })
           .expect(200)
           .end((err, res) => {
-            if (err) {
-              return done(err);
-            }
+            if (err) return done(err);
 
             expect(res.body).to.be.an('array');
             expect(res.body.length).to.equal(1);

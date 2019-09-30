@@ -275,8 +275,13 @@ describe('The resource API', function() {
           creator: new ObjectId()
         };
 
-        lib.search.listen();
-        lib.resource.create(resource).then(resource => setTimeout(() => {
+        lib.resource.create(resource).then(resource => self.helpers.elasticsearch.checkDocumentsIndexed({
+          index: 'resources.idx',
+          type: 'resources',
+          ids: [resource._id]
+        }, err => {
+          if (err) return done(err);
+
           self.helpers.api.loginAsUser(self.app, user.emails[0], password, (err, requestAsMember) => {
             if (err) return done(err);
 
@@ -290,7 +295,7 @@ describe('The resource API', function() {
                 done();
               });
           });
-        }, self.testEnv.serversConfig.elasticsearch.interval_index));
+        }));
       });
     });
   });

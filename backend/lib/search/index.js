@@ -70,9 +70,7 @@ module.exports = dependencies => {
     }
 
     if (filters.length) {
-      elasticsearchQuery.query.bool.filter = {
-        and: filters
-      };
+      elasticsearchQuery.query.bool.filter = filters;
     }
 
     logger.debug('Searching resources with options', {

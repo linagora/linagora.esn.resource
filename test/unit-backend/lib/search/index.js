@@ -56,7 +56,7 @@ describe('The search lib', function() {
           body: {
             query: {
               bool: {
-                filter: { and: [{ term: { domain: '456' } }] },
+                filter: [{ term: { domain: '456' } }],
                 must: {
                   multi_match: {
                     fields: ['name', 'description'],

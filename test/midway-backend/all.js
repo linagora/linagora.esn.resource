@@ -85,7 +85,7 @@ beforeEach(function(done) {
 
 afterEach(function(done) {
   Q.all([
-    esConf.deleteIndex('resources.idx')
+    esConf.deleteIndex('real.resources.idx')
   ])
   .then(() => done())
   .catch(err => {

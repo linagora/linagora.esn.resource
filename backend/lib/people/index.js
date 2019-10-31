@@ -2,7 +2,7 @@ const { OBJECT_TYPE } = require('../constants');
 
 module.exports = dependencies => {
   const peopleModule = dependencies('people');
-  const resolver = require('./resolver')(dependencies);
+  const searcher = require('./searcher')(dependencies);
   const denormalizer = require('./denormalizer')(dependencies);
 
   return {
@@ -10,6 +10,6 @@ module.exports = dependencies => {
   };
 
   function init() {
-    peopleModule.service.addResolver(new peopleModule.PeopleResolver(OBJECT_TYPE, resolver, denormalizer));
+    peopleModule.service.addSearcher(new peopleModule.PeopleSearcher(OBJECT_TYPE, searcher, denormalizer));
   }
 };

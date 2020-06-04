@@ -6,6 +6,7 @@ const AwesomeModule = require('awesome-module');
 const Dependency = AwesomeModule.AwesomeModuleDependency;
 const MODULE_NAME = 'linagora.esn.resource';
 const FRONTEND_JS_PATH = path.join(__dirname, '/frontend/app/');
+const FRONTEND_JS_PATH_BUILD = path.join(__dirname, '/dist/');
 const APP_ENTRY_POINT = path.join(FRONTEND_JS_PATH, 'app.js');
 
 module.exports = new AwesomeModule(MODULE_NAME, {
@@ -36,14 +37,27 @@ module.exports = new AwesomeModule(MODULE_NAME, {
     deploy: function(dependencies, callback) {
       const webserverWrapper = dependencies('webserver-wrapper');
       const app = require('./backend/webserver/application')(dependencies);
-      const frontendFullPathModules = glob.sync([
-        APP_ENTRY_POINT,
-        FRONTEND_JS_PATH + '**/!(*spec).js'
-      ]);
-      const frontendUriModules = frontendFullPathModules.map(filepath => filepath.replace(FRONTEND_JS_PATH, ''));
+
+      // Register every exposed frontend scripts
+      let frontendJsFilesFullPath, frontendJsFilesUri;
+
+      if (process.env.NODE_ENV !== 'production') {
+        frontendJsFilesFullPath = glob.sync([
+          APP_ENTRY_POINT,
+          FRONTEND_JS_PATH + '**/!(*spec).js'
+        ]);
+
+        frontendJsFilesUri = frontendJsFilesFullPath.map(filepath => filepath.replace(FRONTEND_JS_PATH, ''));
+      } else {
+        frontendJsFilesFullPath = glob.sync([
+          FRONTEND_JS_PATH_BUILD + '*.js'
+        ]);
+
+        frontendJsFilesUri = frontendJsFilesFullPath.map(filepath => filepath.replace(FRONTEND_JS_PATH_BUILD, ''));
+      }
 
       app.use('/api', this.api);
-      webserverWrapper.injectAngularAppModules(MODULE_NAME, frontendUriModules, [MODULE_NAME], ['esn'], {localJsFiles: frontendFullPathModules});
+      webserverWrapper.injectAngularAppModules(MODULE_NAME, frontendJsFilesUri, [MODULE_NAME], ['esn'], {localJsFiles: frontendJsFilesFullPath});
       webserverWrapper.injectLess(MODULE_NAME, [path.join(FRONTEND_JS_PATH, 'resource.less')], 'esn');
       webserverWrapper.addApp(MODULE_NAME, app);
 

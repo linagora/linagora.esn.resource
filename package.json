@@ -1,6 +1,6 @@
 {
   "name": "linagora.esn.resource",
-  "version": "1.8.1-rc2",
+  "version": "1.8.1-dev",
   "description": "Base module to support resources in OpenPaaS",
   "main": "index.js",
   "devDependencies": {
